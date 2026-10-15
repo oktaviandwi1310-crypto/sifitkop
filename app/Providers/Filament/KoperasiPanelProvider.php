@@ -35,11 +35,7 @@ class KoperasiPanelProvider extends PanelProvider
                 fn (): string => '<link rel="stylesheet" href="' . asset('css/spiggle-theme.css') . '?v=' . filemtime(public_path('css/spiggle-theme.css')) . '" />'
             )
             ->renderHook(
-<<<<<<< HEAD
-               \Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-=======
-                \Filament\View\PanelsRenderHook::BODY_END,
->>>>>>> 76773c195479ecc60c50740d854a1c878c65a710
+                \Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): string => '<div x-data="{ 
                         theme: localStorage.getItem(\'theme\') || \'light\',
                         toggle() {
