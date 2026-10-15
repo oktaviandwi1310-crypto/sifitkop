@@ -1,0 +1,331 @@
+/* SIFITKOP Spiggle Detached Layout (Final Perfected) */
+:root {
+    --spiggle-bg: #2F3780;
+    --spiggle-content: #ffffff;
+    --spiggle-sidebar-text: #cbd5e1;
+    --spiggle-sidebar-hover: rgba(255, 255, 255, 0.1);
+}
+
+.dark {
+    --spiggle-bg: #1e253c;
+    --spiggle-content: #283046;
+    --spiggle-sidebar-text: #94a3b8;
+    --spiggle-sidebar-hover: rgba(255, 255, 255, 0.05);
+}
+
+/* 1. Full Screen Blue Background (Fixed to prevent page scroll) */
+body, html {
+    background-color: var(--spiggle-bg) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body:has(.fi-layout), html:has(.fi-layout) {
+    height: 100vh !important;
+    overflow: hidden !important; /* Kunci scroll utama layar HANYA JIKA ada fi-layout */
+}
+
+body:has(.fi-simple-layout), html:has(.fi-simple-layout) {
+    height: auto !important;
+    overflow: auto !important; /* Biarkan scroll untuk form auth */
+}
+
+.fi-layout {
+    background-color: var(--spiggle-bg) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+}
+
+.fi-sidebar {
+    background-color: transparent !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    z-index: 40 !important;
+}
+.fi-sidebar-header {
+    background-color: transparent !important;
+    border-bottom: none !important;
+}
+
+.fi-main-ctn {
+    padding: 1rem 1rem 1rem 0 !important;
+    box-sizing: border-box !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.fi-topbar {
+    background-color: var(--spiggle-content) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    border-radius: 2rem 2rem 0 0 !important;
+    margin: 0 !important;
+    width: 100% !important; 
+    max-width: 100% !important; /* Memaksa agar konten menyebar ke kanan di monitor lebar */
+    position: relative !important;
+    top: 0 !important;
+    flex-shrink: 0 !important;
+    z-index: 20 !important;
+}
+.fi-topbar nav {
+    background-color: transparent !important;
+    border-bottom: none !important;
+    max-width: 100% !important;
+}
+
+.fi-main {
+    background-color: var(--spiggle-content) !important;
+    border-radius: 0 0 2rem 2rem !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    flex-grow: 1 !important;
+    overflow-y: auto !important;
+    max-width: 100% !important; /* Memaksa agar konten menyebar ke kanan di monitor lebar */
+}
+
+.fi-layout > div > .fi-topbar + main.fi-main {
+    margin-top: 0 !important;
+    padding-top: 1rem !important;
+}
+
+.fi-sidebar-nav {
+    padding-right: 0 !important; 
+    overflow-x: visible !important; 
+}
+
+.fi-sidebar-open .fi-sidebar-item-active > .fi-sidebar-item-button {
+    background-color: var(--spiggle-content) !important;
+    border-radius: 9999px 0 0 9999px !important; 
+    margin-right: -2rem !important; 
+    padding-right: 2rem !important;
+    padding-top: 0.75rem !important; /* Membuat tombol aktif lebih tebal ala Spiggle */
+    padding-bottom: 0.75rem !important; /* Membuat tombol aktif lebih tebal ala Spiggle */
+    box-shadow: none !important;
+    width: auto !important;
+    position: relative;
+    z-index: 50 !important;
+    contain: none !important; /* Mencegah clipping internal */
+}
+
+/* 
+ * Inverted Border Radius (Gooey Effect) diterapkan pada <li> 
+ * untuk menghindari clipping dari elemen <a> (button).
+ */
+.fi-sidebar-open .fi-sidebar-item-active {
+    position: relative !important;
+    z-index: 50 !important;
+}
+
+.fi-sidebar-open .fi-sidebar-item-active::before,
+.fi-sidebar-open .fi-sidebar-item-active::after {
+    content: "";
+    position: absolute;
+    /* 
+     * KUNCI GEOMETRI: 
+     * right: 0 menempatkan lengkungan pas di perbatasan antara sidebar biru dan card putih.
+     * Sebelumnya ada di -2rem yang membuatnya tenggelam di atas card putih sehingga tidak terlihat.
+     */
+    right: 0;
+    width: 2rem;
+    height: 2rem;
+    background-color: transparent;
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* Lengkungan Atas */
+.fi-sidebar-open .fi-sidebar-item-active::before {
+    bottom: 100%;
+    border-bottom-right-radius: 2rem;
+    box-shadow: 1rem 1rem 0 1rem var(--spiggle-content);
+}
+
+/* Lengkungan Bawah */
+.fi-sidebar-open .fi-sidebar-item-active::after {
+    top: 100%;
+    border-top-right-radius: 2rem;
+    box-shadow: 1rem -1rem 0 1rem var(--spiggle-content);
+}
+
+.fi-sidebar-item-active > .fi-sidebar-item-button,
+.fi-sidebar-item-active > .fi-sidebar-item-button * {
+    color: var(--spiggle-bg) !important;
+    font-weight: 700 !important;
+}
+.dark .fi-sidebar-item-active > .fi-sidebar-item-button,
+.dark .fi-sidebar-item-active > .fi-sidebar-item-button * {
+    color: #ffffff !important;
+}
+
+.fi-logo {
+    color: #ffffff !important;
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+    padding-left: 0.5rem !important;
+}
+
+.fi-sidebar-item-label, .fi-sidebar-item-icon {
+    color: var(--spiggle-sidebar-text) !important;
+    transition: all 0.2s ease-in-out;
+}
+.fi-sidebar-group-label {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-weight: 700 !important;
+}
+
+.fi-sidebar-open .fi-sidebar-item:not(.fi-sidebar-item-active) > .fi-sidebar-item-button {
+    border-radius: 9999px !important;
+    margin-right: 2rem !important; /* Beri ruang untuk lengkungan yang lebar */
+}
+
+.fi-sidebar-item:not(.fi-sidebar-item-active) > .fi-sidebar-item-button:hover {
+    background-color: var(--spiggle-sidebar-hover) !important;
+}
+.fi-sidebar-item:not(.fi-sidebar-item-active) > .fi-sidebar-item-button:hover * {
+    color: #ffffff !important;
+}
+
+/* Hide the default theme switcher button in topbar */
+.fi-topbar button[x-on\\:click*="theme = "],
+.fi-topbar button[title*="Dark"],
+.fi-topbar button[title*="Light"],
+.fi-topbar button[title*="theme"] {
+    display: none !important;
+}
+
+/* Hide default page header breadcrumbs because they are now in topbar */
+.fi-header .fi-breadcrumbs {
+    display: none !important;
+}
+
+/* Custom Spiggle Floating Dark Mode Switcher */
+.spiggle-theme-switcher {
+    /* Hapus position fixed & positioning bottom/right */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    background-color: var(--spiggle-content, transparent);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    margin-right: 0.75rem; /* Memberi jarak dengan ikon lonceng */
+    transition: all 0.2s ease;
+}
+
+.dark .spiggle-theme-switcher {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.spiggle-theme-switcher:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.dark .spiggle-theme-switcher:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.spiggle-theme-switcher-text {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #334155;
+    font-family: 'Inter', sans-serif;
+    user-select: none;
+}
+
+.dark .spiggle-theme-switcher-text {
+    color: #f1f5f9;
+}
+
+.spiggle-toggle {
+    width: 2rem;
+    height: 1.125rem;
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.dark .spiggle-toggle {
+    background-color: #3b82f6;
+}
+
+.spiggle-toggle-dot {
+    width: 0.875rem;
+    height: 0.875rem;
+    background-color: #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    top: 0.125rem;
+    left: 0.125rem;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.dark .spiggle-toggle-dot {
+    transform: translateX(0.875rem);
+}
+
+@media (max-width: 1023px) {
+    body, html { 
+        overflow: auto !important; 
+        height: auto !important; 
+    }
+    .fi-layout { 
+        height: auto !important; 
+        overflow: visible !important; 
+    }
+    
+    /* Mengembalikan background solid untuk sidebar (drawer) agar tidak transparan dan menabrak konten di belakangnya */
+    .fi-sidebar {
+        background-color: var(--spiggle-bg) !important;
+        box-shadow: 0 0 2rem rgba(0,0,0,0.5) !important;
+    }
+    
+    /* Memperbaiki tata letak topbar di mobile */
+    .fi-topbar { 
+        border-radius: 0 !important; 
+        margin: 0 !important; 
+        position: sticky !important; 
+    }
+    
+    /* Mengembalikan main container ke ukuran penuh tanpa border-radius melengkung Desktop */
+    .fi-main-ctn { 
+        padding: 0 !important; 
+        height: auto !important; 
+        display: block !important; 
+    }
+    .fi-main { 
+        border-radius: 0 !important; 
+        overflow-y: visible !important; 
+        flex-grow: 0 !important; 
+    }
+    
+    /* Mengembalikan bentuk normal tombol aktif di mobile (menghapus tarikan ke kanan) */
+    .fi-sidebar-item-active > .fi-sidebar-item-button {
+        border-radius: 0.75rem !important;
+        margin-right: 1rem !important;
+        padding-right: 1rem !important;
+        margin-left: 1rem !important;
+    }
+    
+    /* Menyembunyikan elemen pseudo efek lengkungan pada mobile */
+    .fi-sidebar-item-active::before,
+    .fi-sidebar-item-active::after {
+        display: none !important;
+    }
+    
+    /* Mengembalikan padding tombol non-aktif di mobile */
+    .fi-sidebar-item:not(.fi-sidebar-item-active) > .fi-sidebar-item-button {
+        margin-right: 1rem !important;
+        margin-left: 1rem !important;
+    }
+    
+    .spiggle-theme-switcher {
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+}
