@@ -100,7 +100,11 @@ class AssessmentForm extends Component
 
         $this->peserta->update([
             'dokumen_paparan' => $path,
+<<<<<<< HEAD
             'status_verifikasi' => 'Pending'
+=======
+            'status_verifikasi' => 'Pending' // Siap diverifikasi Admin
+>>>>>>> 67efacadfa6f074c57cb346c7380c20a5f378508
         ]);
 
         $integritasScore = $this->int_1 + $this->int_2 + $this->int_3 + $this->int_4 + $this->int_5 + $this->int_6 + $this->int_7 + $this->int_8 + $this->int_9;

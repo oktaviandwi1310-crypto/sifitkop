@@ -180,6 +180,7 @@ class ProfilKoperasi extends Page implements HasForms
                             ]),
 
                         Forms\Components\Tabs\Tab::make('Dokumen Persyaratan')
+<<<<<<< HEAD
                         ->schema([
                             Forms\Components\FileUpload::make('dokumen_pad')
                                 ->label('PAD dan Pengesahan (PDF)')
@@ -229,6 +230,57 @@ class ProfilKoperasi extends Page implements HasForms
                                 ->downloadable()
                                 ->required(),
                         ])->columns(1),
+=======
+                            ->schema([
+                                Forms\Components\FileUpload::make('dokumen_pad')
+                                    ->label('PAD dan Pengesahan (PDF)')
+                                    ->acceptedFileTypes(['application/pdf'])
+                                    ->directory('dokumen_koperasi')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->required(),
+                                    
+                                Forms\Components\FileUpload::make('dokumen_rat')
+                                    ->label('Berita Acara RAT (PDF)')
+                                    ->acceptedFileTypes(['application/pdf'])
+                                    ->directory('dokumen_koperasi')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->required(),
+                                    
+                                Forms\Components\FileUpload::make('dokumen_lap_keuangan')
+                                    ->label('Laporan Keuangan - Neraca PHU (Audit/PDF)')
+                                    ->acceptedFileTypes(['application/pdf'])
+                                    ->directory('dokumen_koperasi')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->required(),
+                                    
+                                Forms\Components\FileUpload::make('dokumen_goaml')
+                                    ->label('Dokumen GoAML (PDF)')
+                                    ->acceptedFileTypes(['application/pdf'])
+                                    ->directory('dokumen_koperasi')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->required(),
+                                    
+                                Forms\Components\FileUpload::make('dokumen_npwp')
+                                    ->label('NPWP Koperasi (PDF/Gambar)')
+                                    ->acceptedFileTypes(['application/pdf', 'image/*'])
+                                    ->directory('dokumen_koperasi')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->required(),
+                                    
+                                Forms\Components\FileUpload::make('dokumen_permohonan')
+                                    ->label('Surat Permohonan (PDF)')
+                                    ->acceptedFileTypes(['application/pdf'])
+                                    ->directory('dokumen_koperasi')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->required(),
+                            ])->columns(1),
+>>>>>>> 67efacadfa6f074c57cb346c7380c20a5f378508
                     ])
                     ->columnSpanFull()
             ])
@@ -248,7 +300,11 @@ class ProfilKoperasi extends Page implements HasForms
         }
             
         \Filament\Notifications\Notification::make()
+<<<<<<< HEAD
             // ->title('Profil Koperasi berhasil disimpan')
+=======
+            ->title('Profil Koperasi berhasil disimpan')
+>>>>>>> 67efacadfa6f074c57cb346c7380c20a5f378508
             ->success()
             ->send();
     }

@@ -203,7 +203,6 @@ body:has(.fi-simple-layout), html:has(.fi-simple-layout) {
 
 /* Custom Spiggle Floating Dark Mode Switcher */
 .spiggle-theme-switcher {
-<<<<<<< HEAD
     /* Hapus position fixed & positioning bottom/right */
     display: inline-flex;
     align-items: center;
@@ -244,49 +243,11 @@ body:has(.fi-simple-layout), html:has(.fi-simple-layout) {
 .spiggle-toggle {
     width: 2rem;
     height: 1.125rem;
-=======
-    position: fixed;
-    bottom: 2.5rem;
-    right: 2.5rem;
-    z-index: 9999;
-    background-color: var(--spiggle-content);
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    border: 1px solid rgba(0,0,0,0.05);
-    transition: all 0.3s ease;
-}
-.dark .spiggle-theme-switcher {
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-.spiggle-theme-switcher:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
-.spiggle-theme-switcher-text {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #334155;
-    font-family: 'Inter', sans-serif;
-}
-.dark .spiggle-theme-switcher-text {
-    color: #f1f5f9;
-}
-.spiggle-toggle {
-    width: 2.25rem;
-    height: 1.25rem;
->>>>>>> 76773c195479ecc60c50740d854a1c878c65a710
     background-color: #e2e8f0;
     border-radius: 9999px;
     position: relative;
     transition: background-color 0.3s ease;
 }
-<<<<<<< HEAD
 
 .dark .spiggle-toggle {
     background-color: #3b82f6;
@@ -295,14 +256,6 @@ body:has(.fi-simple-layout), html:has(.fi-simple-layout) {
 .spiggle-toggle-dot {
     width: 0.875rem;
     height: 0.875rem;
-=======
-.dark .spiggle-toggle {
-    background-color: #3b82f6; /* Blue toggle active */
-}
-.spiggle-toggle-dot {
-    width: 1rem;
-    height: 1rem;
->>>>>>> 76773c195479ecc60c50740d854a1c878c65a710
     background-color: #ffffff;
     border-radius: 50%;
     position: absolute;
@@ -311,14 +264,9 @@ body:has(.fi-simple-layout), html:has(.fi-simple-layout) {
     transition: transform 0.3s ease;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-<<<<<<< HEAD
 
 .dark .spiggle-toggle-dot {
     transform: translateX(0.875rem);
-=======
-.dark .spiggle-toggle-dot {
-    transform: translateX(1rem);
->>>>>>> 76773c195479ecc60c50740d854a1c878c65a710
 }
 
 @media (max-width: 1023px) {
