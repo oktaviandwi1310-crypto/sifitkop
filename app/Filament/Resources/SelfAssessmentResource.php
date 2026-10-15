@@ -102,10 +102,10 @@ class SelfAssessmentResource extends Resource
                                 $peserta = $record->peserta;
                                 $koperasi = $peserta->koperasi?->nama_koperasi ?? '-';
                                 return new HtmlString("
-                                    <div class='flex flex-wrap gap-4 text-sm'>
-                                        <div><span class='text-gray-400'>Koperasi:</span> <b>{$koperasi}</b></div>
-                                        <div><span class='text-gray-400'>NIK:</span> <b>{$peserta->nik_peserta}</b></div>
-                                        <div><span class='text-gray-400'>Jabatan Usulan:</span> <span class='px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'>{$peserta->jabatan_usulan}</span></div>
+                                    <div style='display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.875rem; align-items: center;'>
+                                        <div><span style='opacity: 0.6;'>Koperasi:</span> <b>{$koperasi}</b></div>
+                                        <div><span style='opacity: 0.6;'>NIK:</span> <b>{$peserta->nik_peserta}</b></div>
+                                        <div><span style='opacity: 0.6;'>Jabatan Usulan:</span> <span style='display: inline-flex; padding: 0.2rem 0.6rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 700; background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);'>{$peserta->jabatan_usulan}</span></div>
                                     </div>
                                 ");
                             }),
@@ -259,7 +259,7 @@ class SelfAssessmentResource extends Resource
                 ->schema([
                     Forms\Components\Placeholder::make("pertanyaan_int_{$i}")
                         ->label("Indikator")
-                        ->content(new HtmlString("<div class='font-bold text-slate-800 dark:text-slate-200 text-sm leading-snug'>{$label}</div>"))
+                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
                         ->columnSpanFull(),
 
                     Forms\Components\Placeholder::make("jawaban_mandiri_int_{$i}")
@@ -269,14 +269,14 @@ class SelfAssessmentResource extends Resource
                             $skor = $item['skor'] ?? null;
                             $uraian = $item['uraian'] ?? null;
                             $badge = ($skor == 1)
-                                ? "<span class='inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300'>✓ Ya (Skor: 1)</span>"
+                                ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35);'>✓ Ya (Skor: 1)</span>"
                                 : (($skor === 0 || $skor === '0')
-                                    ? "<span class='inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300'>✗ Tidak (Skor: 0)</span>"
-                                    : "<span class='text-xs text-slate-400 italic'>Belum dijawab</span>");
+                                    ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35);'>✗ Tidak (Skor: 0)</span>"
+                                    : "<span style='font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Belum dijawab</span>");
                             $uraianHtml = $uraian
-                                ? "<div class='mt-2 p-2.5 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700'><b>Uraian:</b> " . e($uraian) . "</div>"
-                                : "<div class='mt-1 text-xs text-slate-400 italic'>Tanpa uraian keterangan</div>";
-                            return new HtmlString("<div class='p-3 bg-white dark:bg-slate-900 border rounded-xl'>{$badge}{$uraianHtml}</div>");
+                                ? "<div style='margin-top: 0.5rem; padding: 0.625rem; background-color: rgba(125, 125, 125, 0.08); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.5rem; font-size: 0.75rem; line-height: 1.4;'><b>Uraian:</b> " . e($uraian) . "</div>"
+                                : "<div style='margin-top: 0.35rem; font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Tanpa uraian keterangan</div>";
+                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(125, 125, 125, 0.06); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.75rem;'>{$badge}{$uraianHtml}</div>");
                         }),
 
                     Forms\Components\Group::make([
@@ -310,7 +310,7 @@ class SelfAssessmentResource extends Resource
                 ->schema([
                     Forms\Components\Placeholder::make("pertanyaan_rep_{$i}")
                         ->label("Indikator")
-                        ->content(new HtmlString("<div class='font-bold text-slate-800 dark:text-slate-200 text-sm leading-snug'>{$label}</div>"))
+                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
                         ->columnSpanFull(),
 
                     Forms\Components\Placeholder::make("jawaban_mandiri_rep_{$i}")
@@ -320,14 +320,14 @@ class SelfAssessmentResource extends Resource
                             $skor = $item['skor'] ?? null;
                             $uraian = $item['uraian'] ?? null;
                             $badge = ($skor == 1)
-                                ? "<span class='inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300'>✓ Ya (Skor: 1)</span>"
+                                ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35);'>✓ Ya (Skor: 1)</span>"
                                 : (($skor === 0 || $skor === '0')
-                                    ? "<span class='inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300'>✗ Tidak (Skor: 0)</span>"
-                                    : "<span class='text-xs text-slate-400 italic'>Belum dijawab</span>");
+                                    ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35);'>✗ Tidak (Skor: 0)</span>"
+                                    : "<span style='font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Belum dijawab</span>");
                             $uraianHtml = $uraian
-                                ? "<div class='mt-2 p-2.5 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700'><b>Uraian:</b> " . e($uraian) . "</div>"
-                                : "<div class='mt-1 text-xs text-slate-400 italic'>Tanpa uraian keterangan</div>";
-                            return new HtmlString("<div class='p-3 bg-white dark:bg-slate-900 border rounded-xl'>{$badge}{$uraianHtml}</div>");
+                                ? "<div style='margin-top: 0.5rem; padding: 0.625rem; background-color: rgba(125, 125, 125, 0.08); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.5rem; font-size: 0.75rem; line-height: 1.4;'><b>Uraian:</b> " . e($uraian) . "</div>"
+                                : "<div style='margin-top: 0.35rem; font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Tanpa uraian keterangan</div>";
+                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(125, 125, 125, 0.06); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.75rem;'>{$badge}{$uraianHtml}</div>");
                         }),
 
                     Forms\Components\Group::make([
@@ -368,7 +368,7 @@ class SelfAssessmentResource extends Resource
                 ->schema([
                     Forms\Components\Placeholder::make("pertanyaan_kom_{$i}")
                         ->label("Indikator")
-                        ->content(new HtmlString("<div class='font-bold text-slate-800 dark:text-slate-200 text-sm leading-snug'>{$label}</div>"))
+                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
                         ->columnSpanFull(),
 
                     Forms\Components\Placeholder::make("jawaban_mandiri_kom_{$i}")
@@ -379,12 +379,12 @@ class SelfAssessmentResource extends Resource
                             $uraian = $item['uraian'] ?? null;
                             $desc = $kompDesc[$skor] ?? "Skor: {$skor}";
                             $badge = $skor
-                                ? "<span class='inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300'>{$desc}</span>"
-                                : "<span class='text-xs text-slate-400 italic'>Belum dijawab</span>";
+                                ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.35);'>{$desc}</span>"
+                                : "<span style='font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Belum dijawab</span>";
                             $uraianHtml = $uraian
-                                ? "<div class='mt-2 p-2.5 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700'><b>Uraian:</b> " . e($uraian) . "</div>"
-                                : "<div class='mt-1 text-xs text-slate-400 italic'>Tanpa uraian keterangan</div>";
-                            return new HtmlString("<div class='p-3 bg-white dark:bg-slate-900 border rounded-xl'>{$badge}{$uraianHtml}</div>");
+                                ? "<div style='margin-top: 0.5rem; padding: 0.625rem; background-color: rgba(125, 125, 125, 0.08); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.5rem; font-size: 0.75rem; line-height: 1.4;'><b>Uraian:</b> " . e($uraian) . "</div>"
+                                : "<div style='margin-top: 0.35rem; font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Tanpa uraian keterangan</div>";
+                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(125, 125, 125, 0.06); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.75rem;'>{$badge}{$uraianHtml}</div>");
                         }),
 
                     Forms\Components\Group::make([
@@ -422,7 +422,7 @@ class SelfAssessmentResource extends Resource
                 ->schema([
                     Forms\Components\Placeholder::make("pertanyaan_ino_{$i}")
                         ->label("Indikator")
-                        ->content(new HtmlString("<div class='font-bold text-slate-800 dark:text-slate-200 text-sm leading-snug'>{$label}</div>"))
+                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
                         ->columnSpanFull(),
 
                     Forms\Components\Placeholder::make("jawaban_mandiri_ino_{$i}")
@@ -433,12 +433,12 @@ class SelfAssessmentResource extends Resource
                             $uraian = $item['uraian'] ?? null;
                             $desc = $inoDesc[$skor] ?? "Skor: {$skor}";
                             $badge = $skor
-                                ? "<span class='inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300'>{$desc}</span>"
-                                : "<span class='text-xs text-slate-400 italic'>Belum dijawab</span>";
+                                ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.35);'>{$desc}</span>"
+                                : "<span style='font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Belum dijawab</span>";
                             $uraianHtml = $uraian
-                                ? "<div class='mt-2 p-2.5 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700'><b>Uraian:</b> " . e($uraian) . "</div>"
-                                : "<div class='mt-1 text-xs text-slate-400 italic'>Tanpa uraian keterangan</div>";
-                            return new HtmlString("<div class='p-3 bg-white dark:bg-slate-900 border rounded-xl'>{$badge}{$uraianHtml}</div>");
+                                ? "<div style='margin-top: 0.5rem; padding: 0.625rem; background-color: rgba(125, 125, 125, 0.08); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.5rem; font-size: 0.75rem; line-height: 1.4;'><b>Uraian:</b> " . e($uraian) . "</div>"
+                                : "<div style='margin-top: 0.35rem; font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Tanpa uraian keterangan</div>";
+                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(125, 125, 125, 0.06); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.75rem;'>{$badge}{$uraianHtml}</div>");
                         }),
 
                     Forms\Components\Group::make([
@@ -469,7 +469,7 @@ class SelfAssessmentResource extends Resource
                 ->schema([
                     Forms\Components\Placeholder::make("pertanyaan_kla_{$i}")
                         ->label("Pertanyaan Klarifikasi Juklak")
-                        ->content(new HtmlString("<div class='font-bold text-slate-800 dark:text-slate-200 text-sm leading-snug'>{$label}</div>"))
+                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
                         ->columnSpanFull(),
 
                     Forms\Components\Placeholder::make("jawaban_mandiri_kla_{$i}")
@@ -479,8 +479,8 @@ class SelfAssessmentResource extends Resource
                             if (is_array($raw)) {
                                 $raw = $raw['jawaban'] ?? json_encode($raw);
                             }
-                            $text = !empty($raw) ? e($raw) : "<span class='text-slate-400 italic'>Tidak ada jawaban</span>";
-                            return new HtmlString("<div class='p-3.5 bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40 rounded-xl text-xs leading-relaxed text-slate-800 dark:text-slate-200 whitespace-pre-wrap font-sans'>{$text}</div>");
+                            $text = !empty($raw) ? e($raw) : "<span style='font-style: italic; opacity: 0.55;'>Tidak ada jawaban</span>";
+                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.28); border-radius: 0.75rem; font-size: 0.8125rem; line-height: 1.6; white-space: pre-wrap;'>{$text}</div>");
                         }),
 
                     Forms\Components\Group::make([
