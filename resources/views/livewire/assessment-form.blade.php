@@ -407,7 +407,11 @@
                                     </div>
                                     <div>
                                         <h2 class="text-2xl font-black text-slate-900 tracking-tight">Upload Dokumen Paparan</h2>
+<<<<<<< HEAD
                                         <p class="text-slate-500 text-sm mt-1">Dokumen presentasi diunggah bersama form ini. (Opsional)</p>
+=======
+                                        <p class="text-slate-500 text-sm mt-1">Dokumen presentasi wajib diunggah bersama form ini.</p>
+>>>>>>> 76773c195479ecc60c50740d854a1c878c65a710
                                     </div>
                                 </div>
                                 
