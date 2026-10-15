@@ -260,47 +260,82 @@ class SelfAssessmentResource extends Resource
     protected static function getIntegritasSchema(array $labels): array
     {
         $schema = [];
-        foreach ($labels as $i => $label) {
-            $schema[] = Forms\Components\Fieldset::make("Butir Integritas " . ($i + 1))
-                ->schema([
-                    Forms\Components\Placeholder::make("pertanyaan_int_{$i}")
-                        ->label("Indikator")
-                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
-                        ->columnSpanFull(),
+        
+        // Info Banner
+        $schema[] = Forms\Components\Placeholder::make('info_integritas')
+            ->hiddenLabel()
+            ->content(new HtmlString("
+                <div style='display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding: 0.625rem 0.875rem; border-radius: 0.625rem; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 0.5rem;'>
+                    <div style='display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem;'>
+                        <span style='font-size: 1.1rem;'>🛡️</span>
+                        <span><strong>Standar Kelulusan Integritas:</strong> Minimal <strong>9 Poin</strong> (Semua 9 butir wajib berstatus Terpenuhi).</span>
+                    </div>
+                    <span style='font-size: 0.75rem; font-weight: 700; color: #2563eb;'>9 Indikator Verifikasi</span>
+                </div>
+            "))
+            ->columnSpanFull();
 
+        foreach ($labels as $i => $label) {
+            $num = $i + 1;
+            $schema[] = Forms\Components\Section::make()
+                ->heading(new HtmlString("
+                    <div style='display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 0.5rem;'>
+                        <div style='display: flex; align-items: center; gap: 0.5rem;'>
+                            <span style='display: inline-flex; align-items: center; justify-content: center; min-width: 1.75rem; height: 1.75rem; padding: 0 0.35rem; border-radius: 9999px; background: rgba(59, 130, 246, 0.15); color: #2563eb; font-weight: 800; font-size: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.3);'>#{$num}</span>
+                            <span style='font-size: 0.875rem; font-weight: 700; color: inherit; line-height: 1.35;'>{$label}</span>
+                        </div>
+                        <span style='font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 9999px; background: rgba(100, 116, 139, 0.12); color: inherit; opacity: 0.85;'>Maks. 1 Poin</span>
+                    </div>
+                "))
+                ->compact()
+                ->schema([
+                    // KIRI: JAWABAN MANDIRI
                     Forms\Components\Placeholder::make("jawaban_mandiri_int_{$i}")
-                        ->label("1. Penilaian Mandiri Calon Pengurus")
+                        ->hiddenLabel()
                         ->content(function (?SelfAssessment $record) use ($i) {
                             $item = $record?->jawaban_raw['integritas'][$i] ?? null;
                             $skor = $item['skor'] ?? null;
                             $uraian = $item['uraian'] ?? null;
                             $badge = ($skor == 1)
-                                ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35);'>✓ Ya (Skor: 1)</span>"
+                                ? "<span style='display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.35);'>✓ Terpenuhi (1 Poin)</span>"
                                 : (($skor === 0 || $skor === '0')
-                                    ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35);'>✗ Tidak (Skor: 0)</span>"
-                                    : "<span style='font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Belum dijawab</span>");
+                                    ? "<span style='display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(239, 68, 68, 0.15); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.35);'>✗ Tidak (0 Poin)</span>"
+                                    : "<span style='font-size: 0.75rem; opacity: 0.5; font-style: italic;'>Belum dijawab</span>");
+                            
                             $uraianHtml = $uraian
-                                ? "<div style='margin-top: 0.5rem; padding: 0.625rem; background-color: rgba(125, 125, 125, 0.08); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.5rem; font-size: 0.75rem; line-height: 1.4;'><b>Uraian:</b> " . e($uraian) . "</div>"
-                                : "<div style='margin-top: 0.35rem; font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Tanpa uraian keterangan</div>";
-                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(125, 125, 125, 0.06); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.75rem;'>{$badge}{$uraianHtml}</div>");
+                                ? "<div style='margin-top: 0.35rem; padding: 0.4rem 0.6rem; background-color: rgba(255, 255, 255, 0.65); border: 1px solid rgba(125, 125, 125, 0.15); border-radius: 0.375rem; font-size: 0.75rem; line-height: 1.35;'><b>Uraian:</b> " . e($uraian) . "</div>"
+                                : "<div style='margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.5; font-style: italic;'>(Peserta tidak menyertakan uraian)</div>";
+
+                            return new HtmlString("
+                                <div style='display: flex; flex-direction: column; justify-content: center; padding: 0.625rem 0.875rem; background-color: rgba(59, 130, 246, 0.04); border: 1px solid rgba(59, 130, 246, 0.18); border-radius: 0.625rem; min-height: 70px;'>
+                                    <div style='display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;'>
+                                        <span style='font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;'>👤 Jawaban Mandiri:</span>
+                                        {$badge}
+                                    </div>
+                                    {$uraianHtml}
+                                </div>
+                            ");
                         }),
 
+                    // KANAN: VERIFIKASI PENGUJI
                     Forms\Components\Group::make([
                         Forms\Components\Radio::make("penilaian_penguji_raw.integritas.{$i}.skor")
-                            ->label("2. Penilaian / Verifikasi Penguji")
+                            ->label("Verifikasi Penguji:")
                             ->options([
-                                1 => '1 - Terpenuhi (Ya)',
-                                0 => '0 - Tidak Terpenuhi (Tidak)',
+                                1 => '✓ Terpenuhi (1)',
+                                0 => '✗ Tidak Terpenuhi (0)',
                             ])
                             ->inline()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($set, $get) => self::kalkulasiDariIndikator($set, $get)),
 
                         Forms\Components\TextInput::make("penilaian_penguji_raw.integritas.{$i}.catatan")
-                            ->label("Catatan Penguji")
-                            ->placeholder("Catatan verifikasi indikator ini..."),
+                            ->hiddenLabel()
+                            ->placeholder("Catatan verifikasi butir ini (opsional)...")
+                            ->extraInputAttributes(['style' => 'font-size: 0.8125rem;']),
                     ]),
-                ])->columns(2);
+                ])
+                ->columns(2);
         }
         return $schema;
     }
@@ -311,47 +346,82 @@ class SelfAssessmentResource extends Resource
     protected static function getReputasiSchema(array $labels): array
     {
         $schema = [];
-        foreach ($labels as $i => $label) {
-            $schema[] = Forms\Components\Fieldset::make("Butir Reputasi Keuangan " . ($i + 1))
-                ->schema([
-                    Forms\Components\Placeholder::make("pertanyaan_rep_{$i}")
-                        ->label("Indikator")
-                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
-                        ->columnSpanFull(),
+        
+        // Info Banner
+        $schema[] = Forms\Components\Placeholder::make('info_reputasi')
+            ->hiddenLabel()
+            ->content(new HtmlString("
+                <div style='display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding: 0.625rem 0.875rem; border-radius: 0.625rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); margin-bottom: 0.5rem;'>
+                    <div style='display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem;'>
+                        <span style='font-size: 1.1rem;'>🪙</span>
+                        <span><strong>Standar Kelulusan Reputasi:</strong> Minimal <strong>2 Poin</strong> (Kedua butir wajib berstatus Terpenuhi).</span>
+                    </div>
+                    <span style='font-size: 0.75rem; font-weight: 700; color: #059669;'>2 Indikator Verifikasi</span>
+                </div>
+            "))
+            ->columnSpanFull();
 
+        foreach ($labels as $i => $label) {
+            $num = $i + 1;
+            $schema[] = Forms\Components\Section::make()
+                ->heading(new HtmlString("
+                    <div style='display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 0.5rem;'>
+                        <div style='display: flex; align-items: center; gap: 0.5rem;'>
+                            <span style='display: inline-flex; align-items: center; justify-content: center; min-width: 1.75rem; height: 1.75rem; padding: 0 0.35rem; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); color: #059669; font-weight: 800; font-size: 0.75rem; border: 1px solid rgba(16, 185, 129, 0.3);'>#{$num}</span>
+                            <span style='font-size: 0.875rem; font-weight: 700; color: inherit; line-height: 1.35;'>{$label}</span>
+                        </div>
+                        <span style='font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 9999px; background: rgba(100, 116, 139, 0.12); color: inherit; opacity: 0.85;'>Maks. 1 Poin</span>
+                    </div>
+                "))
+                ->compact()
+                ->schema([
+                    // KIRI: JAWABAN MANDIRI
                     Forms\Components\Placeholder::make("jawaban_mandiri_rep_{$i}")
-                        ->label("1. Penilaian Mandiri Calon Pengurus")
+                        ->hiddenLabel()
                         ->content(function (?SelfAssessment $record) use ($i) {
                             $item = $record?->jawaban_raw['reputasi'][$i] ?? null;
                             $skor = $item['skor'] ?? null;
                             $uraian = $item['uraian'] ?? null;
                             $badge = ($skor == 1)
-                                ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35);'>✓ Ya (Skor: 1)</span>"
+                                ? "<span style='display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.35);'>✓ Terpenuhi (1 Poin)</span>"
                                 : (($skor === 0 || $skor === '0')
-                                    ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35);'>✗ Tidak (Skor: 0)</span>"
-                                    : "<span style='font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Belum dijawab</span>");
+                                    ? "<span style='display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(239, 68, 68, 0.15); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.35);'>✗ Tidak (0 Poin)</span>"
+                                    : "<span style='font-size: 0.75rem; opacity: 0.5; font-style: italic;'>Belum dijawab</span>");
+                            
                             $uraianHtml = $uraian
-                                ? "<div style='margin-top: 0.5rem; padding: 0.625rem; background-color: rgba(125, 125, 125, 0.08); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.5rem; font-size: 0.75rem; line-height: 1.4;'><b>Uraian:</b> " . e($uraian) . "</div>"
-                                : "<div style='margin-top: 0.35rem; font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Tanpa uraian keterangan</div>";
-                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(125, 125, 125, 0.06); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.75rem;'>{$badge}{$uraianHtml}</div>");
+                                ? "<div style='margin-top: 0.35rem; padding: 0.4rem 0.6rem; background-color: rgba(255, 255, 255, 0.65); border: 1px solid rgba(125, 125, 125, 0.15); border-radius: 0.375rem; font-size: 0.75rem; line-height: 1.35;'><b>Uraian:</b> " . e($uraian) . "</div>"
+                                : "<div style='margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.5; font-style: italic;'>(Peserta tidak menyertakan uraian)</div>";
+
+                            return new HtmlString("
+                                <div style='display: flex; flex-direction: column; justify-content: center; padding: 0.625rem 0.875rem; background-color: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.18); border-radius: 0.625rem; min-height: 70px;'>
+                                    <div style='display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;'>
+                                        <span style='font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;'>👤 Jawaban Mandiri:</span>
+                                        {$badge}
+                                    </div>
+                                    {$uraianHtml}
+                                </div>
+                            ");
                         }),
 
+                    // KANAN: VERIFIKASI PENGUJI
                     Forms\Components\Group::make([
                         Forms\Components\Radio::make("penilaian_penguji_raw.reputasi.{$i}.skor")
-                            ->label("2. Penilaian / Verifikasi Penguji")
+                            ->label("Verifikasi Penguji:")
                             ->options([
-                                1 => '1 - Terpenuhi (Ya)',
-                                0 => '0 - Tidak Terpenuhi (Tidak)',
+                                1 => '✓ Terpenuhi (1)',
+                                0 => '✗ Tidak Terpenuhi (0)',
                             ])
                             ->inline()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($set, $get) => self::kalkulasiDariIndikator($set, $get)),
 
                         Forms\Components\TextInput::make("penilaian_penguji_raw.reputasi.{$i}.catatan")
-                            ->label("Catatan Penguji")
-                            ->placeholder("Catatan verifikasi reputasi keuangan..."),
+                            ->hiddenLabel()
+                            ->placeholder("Catatan verifikasi butir ini (opsional)...")
+                            ->extraInputAttributes(['style' => 'font-size: 0.8125rem;']),
                     ]),
-                ])->columns(2);
+                ])
+                ->columns(2);
         }
         return $schema;
     }
@@ -363,49 +433,90 @@ class SelfAssessmentResource extends Resource
     {
         $schema = [];
         $kompDesc = [
-            1 => '1 (Sangat Kurang)',
-            2 => '2 (Kurang)',
-            3 => '3 (Cukup)',
             4 => '4 (Baik)',
+            3 => '3 (Cukup)',
+            2 => '2 (Kurang)',
+            1 => '1 (Sangat Kurang)',
         ];
 
-        foreach ($labels as $i => $label) {
-            $schema[] = Forms\Components\Fieldset::make("Butir Kompetensi " . ($i + 1))
-                ->schema([
-                    Forms\Components\Placeholder::make("pertanyaan_kom_{$i}")
-                        ->label("Indikator")
-                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
-                        ->columnSpanFull(),
+        // Info Banner
+        $schema[] = Forms\Components\Placeholder::make('info_kompetensi')
+            ->hiddenLabel()
+            ->content(new HtmlString("
+                <div style='display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding: 0.625rem 0.875rem; border-radius: 0.625rem; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); margin-bottom: 0.5rem;'>
+                    <div style='display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem;'>
+                        <span style='font-size: 1.1rem;'>🎓</span>
+                        <span><strong>Standar Kelulusan Kompetensi:</strong> Minimal <strong>27 Poin</strong> (Rata-rata skor 3,0 / Cukup). Skala nilai: 1 s/d 4.</span>
+                    </div>
+                    <span style='font-size: 0.75rem; font-weight: 700; color: #4f46e5;'>9 Indikator Verifikasi</span>
+                </div>
+            "))
+            ->columnSpanFull();
 
+        foreach ($labels as $i => $label) {
+            $num = $i + 1;
+            $schema[] = Forms\Components\Section::make()
+                ->heading(new HtmlString("
+                    <div style='display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 0.5rem;'>
+                        <div style='display: flex; align-items: center; gap: 0.5rem;'>
+                            <span style='display: inline-flex; align-items: center; justify-content: center; min-width: 1.75rem; height: 1.75rem; padding: 0 0.35rem; border-radius: 9999px; background: rgba(99, 102, 241, 0.15); color: #4f46e5; font-weight: 800; font-size: 0.75rem; border: 1px solid rgba(99, 102, 241, 0.3);'>#{$num}</span>
+                            <span style='font-size: 0.875rem; font-weight: 700; color: inherit; line-height: 1.35;'>{$label}</span>
+                        </div>
+                        <span style='font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 9999px; background: rgba(100, 116, 139, 0.12); color: inherit; opacity: 0.85;'>Maks. 4 Poin</span>
+                    </div>
+                "))
+                ->compact()
+                ->schema([
+                    // KIRI: JAWABAN MANDIRI
                     Forms\Components\Placeholder::make("jawaban_mandiri_kom_{$i}")
-                        ->label("1. Penilaian Mandiri Calon Pengurus")
-                        ->content(function (?SelfAssessment $record) use ($i, $kompDesc) {
+                        ->hiddenLabel()
+                        ->content(function (?SelfAssessment $record) use ($i) {
                             $item = $record?->jawaban_raw['kompetensi'][$i] ?? null;
                             $skor = $item['skor'] ?? null;
                             $uraian = $item['uraian'] ?? null;
-                            $desc = $kompDesc[$skor] ?? "Skor: {$skor}";
-                            $badge = $skor
-                                ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.35);'>{$desc}</span>"
-                                : "<span style='font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Belum dijawab</span>";
+                            
+                            $badgeColors = [
+                                4 => ['bg' => 'rgba(99, 102, 241, 0.15)', 'text' => '#4f46e5', 'border' => 'rgba(99, 102, 241, 0.35)', 'label' => '★ Skor 4 (Baik)'],
+                                3 => ['bg' => 'rgba(59, 130, 246, 0.15)', 'text' => '#2563eb', 'border' => 'rgba(59, 130, 246, 0.35)', 'label' => '★ Skor 3 (Cukup)'],
+                                2 => ['bg' => 'rgba(245, 158, 11, 0.15)', 'text' => '#d97706', 'border' => 'rgba(245, 158, 11, 0.35)', 'label' => '★ Skor 2 (Kurang)'],
+                                1 => ['bg' => 'rgba(239, 68, 68, 0.15)', 'text' => '#dc2626', 'border' => 'rgba(239, 68, 68, 0.35)', 'label' => '★ Skor 1 (Sangat Kurang)'],
+                            ];
+                            $c = $badgeColors[$skor] ?? null;
+                            $badge = $c
+                                ? "<span style='display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: {$c['bg']}; color: {$c['text']}; border: 1px solid {$c['border']};'>{$c['label']}</span>"
+                                : "<span style='font-size: 0.75rem; opacity: 0.5; font-style: italic;'>Belum dijawab</span>";
+
                             $uraianHtml = $uraian
-                                ? "<div style='margin-top: 0.5rem; padding: 0.625rem; background-color: rgba(125, 125, 125, 0.08); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.5rem; font-size: 0.75rem; line-height: 1.4;'><b>Uraian:</b> " . e($uraian) . "</div>"
-                                : "<div style='margin-top: 0.35rem; font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Tanpa uraian keterangan</div>";
-                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(125, 125, 125, 0.06); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.75rem;'>{$badge}{$uraianHtml}</div>");
+                                ? "<div style='margin-top: 0.35rem; padding: 0.4rem 0.6rem; background-color: rgba(255, 255, 255, 0.65); border: 1px solid rgba(125, 125, 125, 0.15); border-radius: 0.375rem; font-size: 0.75rem; line-height: 1.35;'><b>Uraian:</b> " . e($uraian) . "</div>"
+                                : "<div style='margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.5; font-style: italic;'>(Peserta tidak menyertakan uraian)</div>";
+
+                            return new HtmlString("
+                                <div style='display: flex; flex-direction: column; justify-content: center; padding: 0.625rem 0.875rem; background-color: rgba(99, 102, 241, 0.04); border: 1px solid rgba(99, 102, 241, 0.18); border-radius: 0.625rem; min-height: 70px;'>
+                                    <div style='display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;'>
+                                        <span style='font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;'>👤 Jawaban Mandiri:</span>
+                                        {$badge}
+                                    </div>
+                                    {$uraianHtml}
+                                </div>
+                            ");
                         }),
 
+                    // KANAN: VERIFIKASI PENGUJI
                     Forms\Components\Group::make([
                         Forms\Components\Radio::make("penilaian_penguji_raw.kompetensi.{$i}.skor")
-                            ->label("2. Penilaian / Verifikasi Penguji")
+                            ->label("Verifikasi Penguji:")
                             ->options($kompDesc)
                             ->inline()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($set, $get) => self::kalkulasiDariIndikator($set, $get)),
 
                         Forms\Components\TextInput::make("penilaian_penguji_raw.kompetensi.{$i}.catatan")
-                            ->label("Catatan Penguji")
-                            ->placeholder("Catatan kompetensi peserta..."),
+                            ->hiddenLabel()
+                            ->placeholder("Catatan kompetensi butir ini (opsional)...")
+                            ->extraInputAttributes(['style' => 'font-size: 0.8125rem;']),
                     ]),
-                ])->columns(2);
+                ])
+                ->columns(2);
         }
         return $schema;
     }
@@ -417,49 +528,90 @@ class SelfAssessmentResource extends Resource
     {
         $schema = [];
         $inoDesc = [
-            1 => '1 (Kurang Sekali)',
-            2 => '2 (Kurang)',
-            3 => '3 (Cukup)',
             4 => '4 (Baik)',
+            3 => '3 (Cukup)',
+            2 => '2 (Kurang)',
+            1 => '1 (Kurang Sekali)',
         ];
 
-        foreach ($labels as $i => $label) {
-            $schema[] = Forms\Components\Fieldset::make("Butir Inovasi " . ($i + 1))
-                ->schema([
-                    Forms\Components\Placeholder::make("pertanyaan_ino_{$i}")
-                        ->label("Indikator")
-                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
-                        ->columnSpanFull(),
+        // Info Banner
+        $schema[] = Forms\Components\Placeholder::make('info_inovasi')
+            ->hiddenLabel()
+            ->content(new HtmlString("
+                <div style='display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding: 0.625rem 0.875rem; border-radius: 0.625rem; background: rgba(234, 88, 12, 0.08); border: 1px solid rgba(234, 88, 12, 0.2); margin-bottom: 0.5rem;'>
+                    <div style='display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem;'>
+                        <span style='font-size: 1.1rem;'>💡</span>
+                        <span><strong>Standar Kelulusan Kreativitas & Inovasi:</strong> Minimal <strong>9 Poin</strong> (Rata-rata skor 3,0 / Cukup). Skala nilai: 1 s/d 4.</span>
+                    </div>
+                    <span style='font-size: 0.75rem; font-weight: 700; color: #ea580c;'>3 Indikator Verifikasi</span>
+                </div>
+            "))
+            ->columnSpanFull();
 
+        foreach ($labels as $i => $label) {
+            $num = $i + 1;
+            $schema[] = Forms\Components\Section::make()
+                ->heading(new HtmlString("
+                    <div style='display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 0.5rem;'>
+                        <div style='display: flex; align-items: center; gap: 0.5rem;'>
+                            <span style='display: inline-flex; align-items: center; justify-content: center; min-width: 1.75rem; height: 1.75rem; padding: 0 0.35rem; border-radius: 9999px; background: rgba(234, 88, 12, 0.15); color: #ea580c; font-weight: 800; font-size: 0.75rem; border: 1px solid rgba(234, 88, 12, 0.3);'>#{$num}</span>
+                            <span style='font-size: 0.875rem; font-weight: 700; color: inherit; line-height: 1.35;'>{$label}</span>
+                        </div>
+                        <span style='font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 9999px; background: rgba(100, 116, 139, 0.12); color: inherit; opacity: 0.85;'>Maks. 4 Poin</span>
+                    </div>
+                "))
+                ->compact()
+                ->schema([
+                    // KIRI: JAWABAN MANDIRI
                     Forms\Components\Placeholder::make("jawaban_mandiri_ino_{$i}")
-                        ->label("1. Penilaian Mandiri Calon Pengurus")
-                        ->content(function (?SelfAssessment $record) use ($i, $inoDesc) {
+                        ->hiddenLabel()
+                        ->content(function (?SelfAssessment $record) use ($i) {
                             $item = $record?->jawaban_raw['inovasi'][$i] ?? null;
                             $skor = $item['skor'] ?? null;
                             $uraian = $item['uraian'] ?? null;
-                            $desc = $inoDesc[$skor] ?? "Skor: {$skor}";
-                            $badge = $skor
-                                ? "<span style='display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.35);'>{$desc}</span>"
-                                : "<span style='font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Belum dijawab</span>";
+                            
+                            $badgeColors = [
+                                4 => ['bg' => 'rgba(168, 85, 247, 0.15)', 'text' => '#9333ea', 'border' => 'rgba(168, 85, 247, 0.35)', 'label' => '★ Skor 4 (Baik)'],
+                                3 => ['bg' => 'rgba(59, 130, 246, 0.15)', 'text' => '#2563eb', 'border' => 'rgba(59, 130, 246, 0.35)', 'label' => '★ Skor 3 (Cukup)'],
+                                2 => ['bg' => 'rgba(245, 158, 11, 0.15)', 'text' => '#d97706', 'border' => 'rgba(245, 158, 11, 0.35)', 'label' => '★ Skor 2 (Kurang)'],
+                                1 => ['bg' => 'rgba(239, 68, 68, 0.15)', 'text' => '#dc2626', 'border' => 'rgba(239, 68, 68, 0.35)', 'label' => '★ Skor 1 (Kurang Sekali)'],
+                            ];
+                            $c = $badgeColors[$skor] ?? null;
+                            $badge = $c
+                                ? "<span style='display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background-color: {$c['bg']}; color: {$c['text']}; border: 1px solid {$c['border']};'>{$c['label']}</span>"
+                                : "<span style='font-size: 0.75rem; opacity: 0.5; font-style: italic;'>Belum dijawab</span>";
+
                             $uraianHtml = $uraian
-                                ? "<div style='margin-top: 0.5rem; padding: 0.625rem; background-color: rgba(125, 125, 125, 0.08); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.5rem; font-size: 0.75rem; line-height: 1.4;'><b>Uraian:</b> " . e($uraian) . "</div>"
-                                : "<div style='margin-top: 0.35rem; font-size: 0.75rem; opacity: 0.55; font-style: italic;'>Tanpa uraian keterangan</div>";
-                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(125, 125, 125, 0.06); border: 1px solid rgba(125, 125, 125, 0.18); border-radius: 0.75rem;'>{$badge}{$uraianHtml}</div>");
+                                ? "<div style='margin-top: 0.35rem; padding: 0.4rem 0.6rem; background-color: rgba(255, 255, 255, 0.65); border: 1px solid rgba(125, 125, 125, 0.15); border-radius: 0.375rem; font-size: 0.75rem; line-height: 1.35;'><b>Uraian:</b> " . e($uraian) . "</div>"
+                                : "<div style='margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.5; font-style: italic;'>(Peserta tidak menyertakan uraian)</div>";
+
+                            return new HtmlString("
+                                <div style='display: flex; flex-direction: column; justify-content: center; padding: 0.625rem 0.875rem; background-color: rgba(234, 88, 12, 0.04); border: 1px solid rgba(234, 88, 12, 0.18); border-radius: 0.625rem; min-height: 70px;'>
+                                    <div style='display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;'>
+                                        <span style='font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;'>👤 Jawaban Mandiri:</span>
+                                        {$badge}
+                                    </div>
+                                    {$uraianHtml}
+                                </div>
+                            ");
                         }),
 
+                    // KANAN: VERIFIKASI PENGUJI
                     Forms\Components\Group::make([
                         Forms\Components\Radio::make("penilaian_penguji_raw.inovasi.{$i}.skor")
-                            ->label("2. Penilaian / Verifikasi Penguji")
+                            ->label("Verifikasi Penguji:")
                             ->options($inoDesc)
                             ->inline()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($set, $get) => self::kalkulasiDariIndikator($set, $get)),
 
                         Forms\Components\TextInput::make("penilaian_penguji_raw.inovasi.{$i}.catatan")
-                            ->label("Catatan Penguji")
-                            ->placeholder("Catatan inovasi peserta..."),
+                            ->hiddenLabel()
+                            ->placeholder("Catatan inovasi butir ini (opsional)...")
+                            ->extraInputAttributes(['style' => 'font-size: 0.8125rem;']),
                     ]),
-                ])->columns(2);
+                ])
+                ->columns(2);
         }
         return $schema;
     }
@@ -470,41 +622,72 @@ class SelfAssessmentResource extends Resource
     protected static function getKlarifikasiSchema(array $labels): array
     {
         $schema = [];
-        foreach ($labels as $i => $label) {
-            $schema[] = Forms\Components\Fieldset::make("Klarifikasi " . ($i + 1))
-                ->schema([
-                    Forms\Components\Placeholder::make("pertanyaan_kla_{$i}")
-                        ->label("Pertanyaan Klarifikasi Juklak")
-                        ->content(new HtmlString("<div style='font-weight: 700; font-size: 0.875rem; line-height: 1.45;'>{$label}</div>"))
-                        ->columnSpanFull(),
+        
+        // Info Banner
+        $schema[] = Forms\Components\Placeholder::make('info_klarifikasi')
+            ->hiddenLabel()
+            ->content(new HtmlString("
+                <div style='display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding: 0.625rem 0.875rem; border-radius: 0.625rem; background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.2); margin-bottom: 0.5rem;'>
+                    <div style='display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem;'>
+                        <span style='font-size: 1.1rem;'>💬</span>
+                        <span><strong>15 Pertanyaan Klarifikasi Esai:</strong> Periksa jawaban esai calon pengurus & tandai butir yang memerlukan pendalaman saat wawancara tatap muka.</span>
+                    </div>
+                    <span style='font-size: 0.75rem; font-weight: 700; color: #d97706;'>Sesi Wawancara Juklak</span>
+                </div>
+            "))
+            ->columnSpanFull();
 
+        foreach ($labels as $i => $label) {
+            $num = $i + 1;
+            $schema[] = Forms\Components\Section::make()
+                ->heading(new HtmlString("
+                    <div style='display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 0.5rem;'>
+                        <div style='display: flex; align-items: center; gap: 0.5rem;'>
+                            <span style='display: inline-flex; align-items: center; justify-content: center; min-width: 1.75rem; height: 1.75rem; padding: 0 0.35rem; border-radius: 9999px; background: rgba(217, 119, 6, 0.15); color: #d97706; font-weight: 800; font-size: 0.75rem; border: 1px solid rgba(217, 119, 6, 0.3);'>#{$num}</span>
+                            <span style='font-size: 0.875rem; font-weight: 700; color: inherit; line-height: 1.35;'>{$label}</span>
+                        </div>
+                        <span style='font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 9999px; background: rgba(100, 116, 139, 0.12); color: inherit; opacity: 0.85;'>Esai Wawancara</span>
+                    </div>
+                "))
+                ->compact()
+                ->schema([
+                    // KIRI: JAWABAN ESAI PESERTA
                     Forms\Components\Placeholder::make("jawaban_mandiri_kla_{$i}")
-                        ->label("1. Jawaban Esai Calon Pengurus")
+                        ->hiddenLabel()
                         ->content(function (?SelfAssessment $record) use ($i) {
                             $raw = $record?->jawaban_raw['klarifikasi'][$i] ?? null;
                             if (is_array($raw)) {
                                 $raw = $raw['jawaban'] ?? json_encode($raw);
                             }
-                            $text = !empty($raw) ? e($raw) : "<span style='font-style: italic; opacity: 0.55;'>Tidak ada jawaban</span>";
-                            return new HtmlString("<div style='padding: 0.875rem; background-color: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.28); border-radius: 0.75rem; font-size: 0.8125rem; line-height: 1.6; white-space: pre-wrap;'>{$text}</div>");
+                            $text = !empty($raw) ? e($raw) : "<span style='font-style: italic; opacity: 0.5;'>Peserta tidak mengisi jawaban esai</span>";
+                            return new HtmlString("
+                                <div style='display: flex; flex-direction: column; justify-content: center; padding: 0.625rem 0.875rem; background-color: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.22); border-radius: 0.625rem;'>
+                                    <div style='font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #b45309; margin-bottom: 0.25rem;'>
+                                        👤 Jawaban Esai Peserta:
+                                    </div>
+                                    <div style='font-size: 0.8125rem; line-height: 1.5; white-space: pre-wrap;'>{$text}</div>
+                                </div>
+                            ");
                         }),
 
+                    // KANAN: STATUS & CATATAN PENGUJI
                     Forms\Components\Group::make([
                         Forms\Components\Select::make("penilaian_penguji_raw.klarifikasi.{$i}.status")
-                            ->label("2. Status Verifikasi Klarifikasi Penguji")
+                            ->label("Status Verifikasi Penguji:")
                             ->options([
                                 'Sesuai' => '✓ Sesuai / Memadai',
-                                'Perlu Wawancara' => '⏳ Perlu Pendalaman Saat Wawancara',
+                                'Perlu Wawancara' => '⏳ Perlu Pendalaman Wawancara',
                                 'Diragukan' => '✗ Tidak Sesuai / Diragukan',
                             ])
                             ->default('Sesuai'),
 
                         Forms\Components\Textarea::make("penilaian_penguji_raw.klarifikasi.{$i}.catatan")
-                            ->label("Catatan / Tanggapan Penguji")
+                            ->hiddenLabel()
                             ->rows(2)
-                            ->placeholder("Catatan atau pertanyaan lanjutan untuk sesi wawancara..."),
+                            ->placeholder("Catatan atau pertanyaan lanjutan untuk sesi wawancara (opsional)..."),
                     ]),
-                ])->columns(2);
+                ])
+                ->columns(2);
         }
         return $schema;
     }
