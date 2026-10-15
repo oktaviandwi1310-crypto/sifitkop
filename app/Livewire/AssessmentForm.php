@@ -87,7 +87,6 @@ class AssessmentForm extends Component
             'kom_1' => 'required|numeric', 'kom_2' => 'required|numeric', 'kom_3' => 'required|numeric', 'kom_4' => 'required|numeric', 'kom_5' => 'required|numeric', 'kom_6' => 'required|numeric', 'kom_7' => 'required|numeric', 'kom_8' => 'required|numeric', 'kom_9' => 'required|numeric',
             'ino_1' => 'required|numeric', 'ino_2' => 'required|numeric', 'ino_3' => 'required|numeric',
             'klarifikasi_1' => 'required', 'klarifikasi_2' => 'required', 'klarifikasi_3' => 'required', 'klarifikasi_4' => 'required', 'klarifikasi_5' => 'required', 'klarifikasi_6' => 'required', 'klarifikasi_7' => 'required', 'klarifikasi_8' => 'required', 'klarifikasi_9' => 'required', 'klarifikasi_10' => 'required', 'klarifikasi_11' => 'required', 'klarifikasi_12' => 'required', 'klarifikasi_13' => 'required', 'klarifikasi_14' => 'required', 'klarifikasi_15' => 'required',
-<<<<<<< HEAD
             'dokumen_paparan' => 'nullable|mimes:pdf,ppt,pptx|max:10240',
         ], [
             'required' => 'Pertanyaan wajib diisi.',
@@ -102,20 +101,6 @@ class AssessmentForm extends Component
         $this->peserta->update([
             'dokumen_paparan' => $path,
             'status_verifikasi' => 'Pending'
-=======
-            'dokumen_paparan' => 'required|mimes:pdf,ppt,pptx|max:10240',
-        ], [
-            'required' => 'Pertanyaan wajib diisi.',
-            'dokumen_paparan.required' => 'Dokumen paparan wajib diunggah.',
-            'dokumen_paparan.mimes' => 'Format paparan harus berupa PDF, PPT, atau PPTX.',
-        ]);
-
-        $path = $this->dokumen_paparan->store('paparan-peserta', 'public');
-        
-        $this->peserta->update([
-            'dokumen_paparan' => $path,
-            'status_verifikasi' => 'Pending' // Siap diverifikasi Admin
->>>>>>> 76773c195479ecc60c50740d854a1c878c65a710
         ]);
 
         $integritasScore = $this->int_1 + $this->int_2 + $this->int_3 + $this->int_4 + $this->int_5 + $this->int_6 + $this->int_7 + $this->int_8 + $this->int_9;

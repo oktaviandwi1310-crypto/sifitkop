@@ -180,7 +180,6 @@ class ProfilKoperasi extends Page implements HasForms
                             ]),
 
                         Forms\Components\Tabs\Tab::make('Dokumen Persyaratan')
-<<<<<<< HEAD
                         ->schema([
                             Forms\Components\FileUpload::make('dokumen_pad')
                                 ->label('PAD dan Pengesahan (PDF)')
@@ -230,35 +229,6 @@ class ProfilKoperasi extends Page implements HasForms
                                 ->downloadable()
                                 ->required(),
                         ])->columns(1),
-=======
-                            ->schema([
-                                Forms\Components\FileUpload::make('dokumen_pad')
-                                    ->label('PAD dan Pengesahan (PDF)')
-                                    ->acceptedFileTypes(['application/pdf'])
-                                    ->directory('dokumen_koperasi')
-                                    ->required(),
-                                Forms\Components\FileUpload::make('dokumen_rat')
-                                    ->label('Berita Acara RAT (PDF)')
-                                    ->acceptedFileTypes(['application/pdf'])
-                                    ->directory('dokumen_koperasi')
-                                    ->required(),
-                                Forms\Components\FileUpload::make('dokumen_lap_keuangan')
-                                    ->label('Laporan Keuangan - Neraca PHU (Audit/PDF)')
-                                    ->acceptedFileTypes(['application/pdf'])
-                                    ->directory('dokumen_koperasi')
-                                    ->required(),
-                                Forms\Components\FileUpload::make('dokumen_goaml')
-                                    ->label('Dokumen GoAML (PDF)')
-                                    ->acceptedFileTypes(['application/pdf'])
-                                    ->directory('dokumen_koperasi')
-                                    ->required(),
-                                Forms\Components\FileUpload::make('dokumen_npwp')
-                                    ->label('NPWP Koperasi (PDF/Gambar)')
-                                    ->acceptedFileTypes(['application/pdf', 'image/*'])
-                                    ->directory('dokumen_koperasi')
-                                    ->required(),
-                            ])->columns(1),
->>>>>>> 76773c195479ecc60c50740d854a1c878c65a710
                     ])
                     ->columnSpanFull()
             ])
@@ -278,11 +248,7 @@ class ProfilKoperasi extends Page implements HasForms
         }
             
         \Filament\Notifications\Notification::make()
-<<<<<<< HEAD
             // ->title('Profil Koperasi berhasil disimpan')
-=======
-            ->title('Profil Koperasi berhasil disimpan')
->>>>>>> 76773c195479ecc60c50740d854a1c878c65a710
             ->success()
             ->send();
     }
