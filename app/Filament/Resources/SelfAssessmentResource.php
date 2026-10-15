@@ -111,6 +111,12 @@ class SelfAssessmentResource extends Resource
                             }),
                     ])->columns(2),
 
+                // VISUALISASI SKOR INTERAKTIF (BAR, RADAR, LINE)
+                Forms\Components\Placeholder::make('visualisasi_skor')
+                    ->hiddenLabel()
+                    ->content(fn ($record) => view('filament.components.visualisasi-skor', ['record' => $record]))
+                    ->columnSpanFull(),
+
                 // SECTION PERBANDINGAN 2 PENILAIAN
                 Forms\Components\Section::make('Rekapitulasi: Penilaian Mandiri vs Penilaian Admin/Penguji')
                     ->description('Terdapat 2 penilaian: (1) Penilaian Mandiri yang diisi oleh calon pengurus via portal, dan (2) Penilaian resmi yang diverifikasi & dinilai oleh Admin/Penguji.')

@@ -18,7 +18,8 @@
     @endphp
 
     <div class="space-y-6">
-        
+        @include('filament.components.visualisasi-skor', ['record' => $sa])
+
         <!-- Score Banner -->
         <x-filament::section class="border-t-4" style="border-top-color: rgb(var(--{{ $scoreColor }}-500));">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
