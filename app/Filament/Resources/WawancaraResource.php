@@ -132,7 +132,7 @@ class WawancaraResource extends Resource
                                 $alasanGugur = '';
                                 if (!$isLulus && $totalWawancara > 0) {
                                     if (!$lulusWawancara) {
-                                        $alasanGugur = '<div class="text-xs font-bold text-rose-600 dark:text-rose-400 mt-2">⚠️ SYARAT GUGUR: Skor Wawancara (' . $totalWawancara . '/24) di bawah 18 (Jelek/Kurang). Peserta TIDAK LULUS walaupun nilai administrasi tinggi atau total kumulatif mencapai target.</div>';
+                                        $alasanGugur = '<div class="text-xs font-bold text-rose-600 dark:text-rose-400 mt-2">⚠️ SYARAT GUGUR: Skor Wawancara (' . $totalWawancara . '/24) di bawah 18 (Kurang). Peserta TIDAK LULUS walaupun nilai administrasi tinggi atau total kumulatif mencapai target.</div>';
                                     } elseif (!$lulusTahap1) {
                                         $alasanGugur = '<div class="text-xs font-bold text-rose-600 dark:text-rose-400 mt-2">⚠️ Catatan: Skor Dokumen & Self Assessment (' . $skorTahap1 . '/76) belum mencapai batas minimal 64.</div>';
                                     } elseif (!$lulusTotal) {
