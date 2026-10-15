@@ -47,7 +47,6 @@ class Peserta extends Model
     protected $casts = [
         'penilaian_admin_checklist' => 'array',
         'jadwal_wawancara' => 'datetime',
-        'penguji_id' => 'array',
     ];
 
     protected static function booted()
@@ -66,6 +65,6 @@ class Peserta extends Model
     
     public function penguji()
     {
-        return $this->belongsTo(Penguji::class, 'penguji_id');
+        return $this->belongsTo(User::class, 'penguji_id');
     }
 }

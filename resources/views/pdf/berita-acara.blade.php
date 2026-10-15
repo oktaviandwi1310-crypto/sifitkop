@@ -99,8 +99,11 @@
     </table>
 
     <p class="mb-4">
-        Berdasarkan ambang batas kelulusan Juklak (Total Kumulatif &ge; 82), maka peserta dinyatakan: <br>
-        <strong>&raquo; {{ strtoupper($peserta->status_kelulusan ?? 'BELUM DITETAPKAN') }} &laquo;</strong>
+        Berdasarkan kriteria kelulusan Juklak UKK Nomor 1 Tahun 2024 (Syarat Tahap 1 &ge; 64, Syarat Wawancara &ge; 18, dan Total Kumulatif &ge; 82), maka peserta dinyatakan: <br>
+        <span style="font-size: 14pt;"><strong>&raquo; {{ strtoupper($peserta->status_kelulusan ?? 'BELUM DITETAPKAN') }} &laquo;</strong></span>
+        @if(($peserta->status_kelulusan === 'TIDAK LULUS' || empty($peserta->status_kelulusan)) && $peserta->skor_wawancara < 18)
+            <br><span style="font-size: 10pt; font-style: italic; color: #555;">(Catatan: Skor Wawancara {{ $peserta->skor_wawancara }}/24 belum memenuhi batas minimal kelulusan &ge; 18)</span>
+        @endif
     </p>
 
     <p>Demikian Berita Acara ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagaimana mestinya.</p>
