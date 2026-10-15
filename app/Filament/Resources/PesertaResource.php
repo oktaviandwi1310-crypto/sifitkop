@@ -192,10 +192,8 @@ class PesertaResource extends Resource
                         Forms\Components\DateTimePicker::make('jadwal_wawancara')
                             ->label('Atur Jadwal Wawancara'),
                         Forms\Components\Select::make('penguji_id')
-                            ->label('Tugaskan Tim Penguji (Maks. 4)')
-                            ->options(\App\Models\Penguji::pluck('name', 'id'))
-                            ->multiple()
-                            ->maxItems(4)
+                            ->label('Tugaskan Tim Penguji / Asesor')
+                            ->options(\App\Models\User::whereIn('role', ['admin', 'penguji'])->pluck('name', 'id'))
                             ->searchable()
                             ->preload(),
                         Forms\Components\Placeholder::make('dokumen_paparan')
@@ -207,14 +205,17 @@ class PesertaResource extends Resource
 
                 Forms\Components\Section::make('Hasil Akhir UKK')
                     ->schema([
+                        Forms\Components\TextInput::make('skor_wawancara')
+                            ->label('Skor Wawancara (Syarat Minimal: >= 18)')
+                            ->readOnly(),
                         Forms\Components\TextInput::make('skor_total')
-                            ->label('Total Kumulatif (Akhir)')
+                            ->label('Total Skor Kumulatif (Minimal: >= 82)')
                             ->readOnly(),
                         Forms\Components\TextInput::make('status_kelulusan')
+                            ->label('Keputusan Kelulusan UKK')
                             ->maxLength(255)
-                            ->readOnly()
-                            ->label('Status Kelulusan Juklak (Lulus >= 82)'),
-                    ])->columns(2),
+                            ->readOnly(),
+                    ])->columns(3),
             ]);
     }
 

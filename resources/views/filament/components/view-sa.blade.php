@@ -18,7 +18,8 @@
     @endphp
 
     <div class="space-y-6">
-        
+        @include('filament.components.visualisasi-skor', ['record' => $sa])
+
         <!-- Score Banner -->
         <x-filament::section class="border-t-4" style="border-top-color: rgb(var(--{{ $scoreColor }}-500));">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -27,8 +28,14 @@
                         <x-heroicon-o-chart-bar class="w-6 h-6" />
                     </x-filament::badge>
                     <div>
-                        <h3 class="text-lg font-bold">Total Skor Penilaian Mandiri</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Berdasarkan jawaban sistem yang diberikan oleh peserta.</p>
+                        <h3 class="text-lg font-bold">Total Skor Self Assessment (UKK)</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            @if($sa->penguji)
+                                Diverifikasi oleh Asesor: <span class="font-bold text-primary-600 dark:text-primary-400">{{ $sa->penguji->name }}</span> (Status: {{ $sa->status_penguji ?? $sa->status_kelulusan }})
+                            @else
+                                Berdasarkan isian mandiri peserta (Belum diverifikasi penguji)
+                            @endif
+                        </p>
                     </div>
                 </div>
                 <div class="text-center sm:text-right">

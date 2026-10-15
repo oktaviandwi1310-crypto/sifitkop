@@ -158,6 +158,11 @@ class AssessmentForm extends Component
 
         SelfAssessment::create([
             'peserta_id' => $this->peserta->id,
+            'skor_mandiri_integritas' => $integritasScore,
+            'skor_mandiri_reputasi' => $reputasiScore,
+            'skor_mandiri_kompetensi' => $kompetensiScore,
+            'skor_mandiri_inovasi' => $inovasiScore,
+            'status_mandiri' => $status,
             'integritas_score' => $integritasScore,
             'reputasi_score' => $reputasiScore,
             'kompetensi_score' => $kompetensiScore,
