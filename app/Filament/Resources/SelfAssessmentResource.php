@@ -787,7 +787,8 @@ class SelfAssessmentResource extends Resource
                         $total = $record->skor_mandiri_integritas + $record->skor_mandiri_reputasi + $record->skor_mandiri_kompetensi + $record->skor_mandiri_inovasi;
                         return "{$total} / 59";
                     })
-                    ->description(fn (SelfAssessment $record): string => $record->status_mandiri ?? '-'),
+                    ->description(fn (SelfAssessment $record): string => ($record->status_mandiri ?? '-') . ' (Min. 47)')
+                    ->tooltip('Maksimal kuesioner SA: 59 poin (Min. Terpenuhi: 47). Target kelulusan Tahap 1: ≥ 64 (setelah ditambah Verifikasi Dokumen 17 poin).'),
 
                 Tables\Columns\TextColumn::make('skor_penguji_total')
                     ->label('Skor Penguji')
@@ -798,7 +799,8 @@ class SelfAssessmentResource extends Resource
                                  ($record->skor_penguji_inovasi ?? $record->inovasi_score);
                         return "{$total} / 59";
                     })
-                    ->description(fn (SelfAssessment $record): string => $record->status_penguji ?? $record->status_kelulusan ?? '-'),
+                    ->description(fn (SelfAssessment $record): string => ($record->status_penguji ?? $record->status_kelulusan ?? '-') . ' (Min. 47)')
+                    ->tooltip('Skor verifikasi Asesor (Maksimal: 59, Min. Terpenuhi: 47). Target Tahap 1: ≥ 64.'),
 
                 Tables\Columns\TextColumn::make('penguji.name')
                     ->label('Asesor Penilai')
