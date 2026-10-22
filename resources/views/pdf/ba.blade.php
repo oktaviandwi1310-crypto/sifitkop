@@ -134,7 +134,7 @@
     @endphp
 
     <p class="content-p">
-        Pada hari ini, <strong>{{ $namaHari }}</strong>, tanggal <strong>{{ $tglPleno->locale('id')->translatedFormat('j F Y') }}</strong>, bertempat di Kantor Dinas Koperasi dan UKM Provinsi Jawa Tengah, Jl. Sisingamangaraja No. 3A Kaliwiru, Kec. Candisari, Kota Semarang, Tim Penguji Kelayakan dan Kepatutan telah melaksanakan Uji Kelayakan dan Kepatutan serta Rapat Pleno untuk memberikan penilaian terhadap Pengurus dan Pengawas <strong>{{ optional($koperasi)->nama_koperasi ?? 'KSP/Koperasi' }}</strong> yang berkedudukan di {{ optional($koperasi)->alamat_lengkap ?? 'Jawa Tengah' }}.
+        Pada hari ini, <strong>{{ $namaHari }}</strong>, tanggal <strong>{{ $tglPleno->locale('id')->translatedFormat('j F Y') }}</strong>, bertempat di Kantor Dinas Koperasi dan UKM Provinsi Jawa Tengah, Jl. Sisingamangaraja No. 3A Kaliwiru, Kec. Candisari, Kota Semarang, Tim Penguji Kelayakan dan Kepatutan telah melaksanakan Uji Kelayakan dan Kepatutan serta Rapat Pleno untuk memberikan penilaian terhadap Pengurus dan Pengawas <strong>{{ optional($koperasi)->nama_koperasi ?? 'KSP/Koperasi' }}</strong> yang berkedudukan di {{ optional($koperasi)->alamat ?? 'Jawa Tengah' }}.
     </p>
 
     <p class="content-p">

@@ -114,8 +114,8 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\AdminStatsWidget::class,
                 \App\Filament\Widgets\KoperasiBarChart::class,
                 \App\Filament\Widgets\StatusPesertaChart::class,
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

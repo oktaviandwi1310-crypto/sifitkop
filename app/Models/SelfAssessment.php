@@ -35,6 +35,7 @@ class SelfAssessment extends Model
     protected $casts = [
         'jawaban_raw' => 'array',
         'penilaian_penguji_raw' => 'array',
+        'penguji_id' => 'array',
     ];
 
     public function peserta()
@@ -42,8 +43,13 @@ class SelfAssessment extends Model
         return $this->belongsTo(Peserta::class);
     }
 
+    // public function penguji()
+    // {
+    //     return Penguji::whereIn('id', $this->penguji_id ?? [])->get();
+    // }
+
     public function penguji()
     {
-        return $this->belongsTo(User::class, 'penguji_id');
+        return Penguji::whereIn('id', $this->penguji_id ?? [])->get();
     }
 }

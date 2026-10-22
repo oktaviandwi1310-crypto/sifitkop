@@ -160,7 +160,8 @@ class SelfAssessmentResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('penguji_id')
                                     ->label('Tim Penguji / Asesor Penilai')
-                                    ->options(User::pluck('name', 'id'))
+                                    ->options(\App\Models\Penguji::pluck('name', 'id'))
+                                    ->multiple()
                                     ->searchable()
                                     ->preload()
                                     ->columnSpanFull()
@@ -800,10 +801,15 @@ class SelfAssessmentResource extends Resource
                     })
                     ->description(fn (SelfAssessment $record): string => $record->status_penguji ?? $record->status_kelulusan ?? '-'),
 
-                Tables\Columns\TextColumn::make('penguji.name')
+                Tables\Columns\TextColumn::make('asesor')
                     ->label('Asesor Penilai')
+                    ->state(fn (SelfAssessment $record) => $record->penguji()->pluck('name')->join(', ') ?: null)
                     ->placeholder('Belum Ditentukan')
                     ->toggleable(),
+                // Tables\Columns\TextColumn::make('penguji.name')
+                //     ->label('Asesor Penilai')
+                //     ->placeholder('Belum Ditentukan')
+                //     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('status_kelulusan')
                     ->badge()

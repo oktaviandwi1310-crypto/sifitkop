@@ -193,15 +193,11 @@ class WawancaraResource extends Resource
                 //     ->color('info')
                 //     ->placeholder('Belum Ditugaskan')
                 //     ->searchable(),
-                Tables\Columns\TextColumn::make('penguji_id')
+                Tables\Columns\TextColumn::make('tim_penguji')
                     ->label('Tim Penguji')
-                    ->formatStateUsing(function ($state) {
-                        if (is_array($state) && !empty($state)) {
-                            return \App\Models\Penguji::whereIn('id', $state)->pluck('nama')->join(', ');
-                        }
-                        return '-';
-                    })
-                    ->badge(),
+                    ->state(fn (Peserta $record) => \App\Models\Penguji::whereIn('id', $record->penguji_id ?? [])->pluck('name')->all())
+                    ->badge()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('skor_wawancara')
                     ->label('Skor Wawancara')
                     ->badge()

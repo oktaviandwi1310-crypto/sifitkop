@@ -122,7 +122,8 @@ class EditSelfAssessment extends EditRecord
 
         // 3. Default penguji penilai (user login atau asesor default)
         if (empty($data['penguji_id'])) {
-            $data['penguji_id'] = auth()->id() ?? 1;
+              $data['penguji_id'] = auth()->id() ?? 1;
+            // $data['penguji_id'] = auth()->id() ?? 1;
         }
 
         // 4. Inisialisasi struktur penilaian_penguji_raw jika masih kosong
