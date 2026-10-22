@@ -90,7 +90,7 @@ class PesertaResource extends Resource
                             ->acceptedFileTypes(['application/pdf'])
                             ->maxSize(5120)
                             ->directory('dokumen-peserta')
-                             ->helperText(new \Illuminate\Support\HtmlString('Lihat atau unduh <a href="' . asset('template/lampiran-v.docx') . '" target="_blank" class="text-danger-600 font-medium underline hover:text-primary-500">Contoh Format CV (DOCX)</a>'))
+                            ->helperText(new \Illuminate\Support\HtmlString('Lihat atau unduh <a href="' . asset('template/lampiran-v.docx') . '" target="_blank" class="text-danger-600 font-medium underline hover:text-primary-500">Contoh Format CV (DOCX)</a>'))
                             ->openable()
                             ->downloadable()
                             ->required(),

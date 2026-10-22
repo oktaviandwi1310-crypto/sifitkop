@@ -217,8 +217,7 @@ img {
   box-shadow: 0 4px 24px -8px rgba(15, 23, 42, 0.08);
 }
 .btn-hw-primary,
-.float-card-1 .fc-icon,
-.hw-logo-mark {
+.float-card-1 .fc-icon {
   background: linear-gradient(
     135deg,
     var(--clr-primary),

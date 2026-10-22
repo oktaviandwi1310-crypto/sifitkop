@@ -40,11 +40,12 @@ class WawancaraResource extends Resource
                             ->label('Jadwal Wawancara')
                             ->disabled(fn () => Auth::user()->role !== 'admin'),
                         Forms\Components\Select::make('penguji_id')
-                            ->label('Asesor / Penguji')
-                            ->options(
-                                \App\Models\User::whereIn('role', ['admin', 'penguji'])->pluck('name', 'id')
-                            )
+                            ->label('Tugaskan Tim Penguji (Maks. 4)')
+                            ->options(\App\Models\Penguji::pluck('name', 'id')) 
+                            ->multiple()
+                            ->maxItems(4)
                             ->searchable()
+                            ->preload()
                             ->disabled(fn () => Auth::user()->role !== 'admin'),
                         Forms\Components\FileUpload::make('dokumen_paparan')
                             ->label('Materi Paparan (PDF/PPT)')
@@ -186,12 +187,21 @@ class WawancaraResource extends Resource
                     ->dateTime('d M Y, H:i')
                     ->sortable()
                     ->label('Jadwal'),
-                Tables\Columns\TextColumn::make('penguji.name')
-                    ->label('Penguji')
-                    ->badge()
-                    ->color('info')
-                    ->placeholder('Belum Ditugaskan')
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('penguji.name')
+                //     ->label('Penguji')
+                //     ->badge()
+                //     ->color('info')
+                //     ->placeholder('Belum Ditugaskan')
+                //     ->searchable(),
+                Tables\Columns\TextColumn::make('penguji_id')
+                    ->label('Tim Penguji')
+                    ->formatStateUsing(function ($state) {
+                        if (is_array($state) && !empty($state)) {
+                            return \App\Models\Penguji::whereIn('id', $state)->pluck('nama')->join(', ');
+                        }
+                        return '-';
+                    })
+                    ->badge(),
                 Tables\Columns\TextColumn::make('skor_wawancara')
                     ->label('Skor Wawancara')
                     ->badge()
@@ -238,18 +248,51 @@ class WawancaraResource extends Resource
                     ->label('Beri / Edit Nilai')
                     ->icon('heroicon-o-pencil-square')
                     ->color('primary'),
-
                 Tables\Actions\Action::make('cetak_berita_acara')
                     ->label('Berita Acara')
                     ->icon('heroicon-o-document-text')
                     ->color('warning')
                     ->action(function (\App\Models\Peserta $record) {
-                        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.berita-acara', ['peserta' => $record]);
+                        // Load Koperasi beserta semua pesertanya
+                        $koperasi = $record->koperasi;
+                        $daftarPeserta = \App\Models\Peserta::where('koperasi_id', $record->koperasi_id)->get();
+
+                        // Ambil semua ID Penguji dari peserta di koperasi ini
+                        $allPengujiIds = $daftarPeserta
+                            ->pluck('penguji_id')
+                            ->filter()
+                            ->flatten()
+                            ->unique()
+                            ->toArray();
+
+                        // Ambil data penguji
+                        $timPenguji = \App\Models\Penguji::whereIn('id', $allPengujiIds)->get();
+
+                        // Render PDF menggunakan view pdf.ba
+                        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.ba', [
+                            'koperasi' => $koperasi,
+                            'daftar_peserta' => $daftarPeserta,
+                            'tim_penguji' => $timPenguji,
+                            'tanggal_pleno' => now(),
+                        ]);
+
                         return response()->streamDownload(
                             fn () => print($pdf->output()), 
                             "Berita_Acara_UKK_{$record->nik_peserta}.pdf"
                         );
                     }),
+
+                // Tables\Actions\Action::make('cetak_berita_acara')
+                //     ->label('Berita Acara')
+                //     ->icon('heroicon-o-document-text')
+                //     ->color('warning')
+                //     ->action(function (\App\Models\Peserta $record) {
+                //         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.ba', ['peserta' => $record]);
+                //         return response()->streamDownload(
+                //             fn () => print($pdf->output()), 
+                //             "Berita_Acara_UKK_{$record->nik_peserta}.pdf"
+                //         );
+                //     }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -18,8 +18,13 @@ class Koperasi extends Model
         'susunan_pengawas' => 'array',
     ];
 
+    // public function pesertas()
+    // {
+    //     return $this->hasMany(Peserta::class);
+    // }
+
     public function pesertas()
     {
-        return $this->hasMany(Peserta::class);
+        return $this->hasMany(Peserta::class, 'koperasi_id');
     }
 }

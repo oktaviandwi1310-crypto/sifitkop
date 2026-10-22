@@ -159,7 +159,7 @@ class KoperasiResource extends Resource
                                     ->downloadable()
                                     ->required(),
                                 Forms\Components\FileUpload::make('dokumen_rat')
-                                    ->label('Berita Acara RAT (PDF)')
+                                    ->label('Berita Acara RAT (PDF)')                                    
                                     ->acceptedFileTypes(['application/pdf'])
                                     ->directory('dokumen_koperasi')
                                     ->openable()

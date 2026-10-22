@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->brandName('SIFITKOP Admin')
+            ->favicon(asset('logo.png'))
             ->brandLogoHeight('2rem')
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()

@@ -19,6 +19,9 @@ class PesertaResource extends Resource
     protected static ?string $modelLabel = 'Peserta UKK';
     protected static ?string $navigationGroup = 'Verifikasi UKK';
 
+    // Menu ini disembunyikan karena diganti KoperasiPesertaResource
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -116,7 +119,7 @@ class PesertaResource extends Resource
                                 'pernyataan' => '3. Surat Pernyataan Memenuhi Aspek (Lampiran VI)',
                                 'skck' => '4. SKCK',
                                 'slik' => '5. SLIK OJK (Surat Asli)',
-                                'rencana_kerja' => '6. Tulisan Rencana Kerja Menjadi Pengurus 1 Tahun',
+                                'rencana_kerja' => '6. Tulisan Rencana Kerja dalam 1 Tahun',
                                 'pailit' => '7. Surat Keterangan Pailit dari Pengadilan Niaga',
                             ])
                             ->columns(2)
@@ -139,7 +142,7 @@ class PesertaResource extends Resource
                             
                         Forms\Components\Select::make('status_verifikasi')
                             ->options([
-                                'Pending' => 'Pending (Menunggu Verifikasi)',
+                                'Pending' => 'Belum Verifikasi',
                                 'Revisi' => 'Perlu Revisi Dokumen',
                                 'Terverifikasi' => 'Terverifikasi (Lanjut ke UKK)',
                                 'Ditolak' => 'Ditolak (Tidak Memenuhi Syarat)',
@@ -180,10 +183,10 @@ class PesertaResource extends Resource
                                 $skorDokumen = (int) $get('skor_admin');
                                 
                                 $grandTotal = $totalSA + $skorDokumen;
-                                $color = $grandTotal >= 58 ? 'text-green-600' : 'text-red-600';
-                                $status = $grandTotal >= 58 ? 'Memenuhi Syarat Lanjut Wawancara' : 'Tidak Memenuhi Syarat';
+                                $color = $grandTotal >= 64 ? 'text-green-600' : 'text-red-600';
+                                $status = $grandTotal >= 64 ? 'Memenuhi Syarat Lanjut Wawancara' : 'Tidak Memenuhi Syarat';
                                 
-                                return new \Illuminate\Support\HtmlString("<span class='{$color} font-bold text-lg'>{$grandTotal} / 76</span><br><span class='text-sm text-slate-500'>Syarat Lolos: >= 58. Status: {$status}</span>");
+                                return new \Illuminate\Support\HtmlString("<span class='{$color} font-bold text-lg'>{$grandTotal} / 76</span><br><span class='text-sm text-slate-500'>Syarat Lolos: >= 64. Status: {$status}</span>");
                             }),
                     ])->columns(1),
 
@@ -192,8 +195,10 @@ class PesertaResource extends Resource
                         Forms\Components\DateTimePicker::make('jadwal_wawancara')
                             ->label('Atur Jadwal Wawancara'),
                         Forms\Components\Select::make('penguji_id')
-                            ->label('Tugaskan Tim Penguji / Asesor')
-                            ->options(\App\Models\User::whereIn('role', ['admin', 'penguji'])->pluck('name', 'id'))
+                            ->label('Tugaskan Tim Penguji (Maks. 4)')
+                            ->options(\App\Models\Penguji::pluck('name', 'id'))
+                            ->multiple()
+                            ->maxItems(4)
                             ->searchable()
                             ->preload(),
                         Forms\Components\Placeholder::make('dokumen_paparan')
@@ -237,6 +242,12 @@ class PesertaResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->limit(20),
+                // Tables\Columns\TextColumn::make('pesertas_count')
+                //     ->counts('pesertas')
+                //     ->label('Jumlah Peserta')
+                //     ->badge()
+                //     ->color('info')
+                //     ->alignCenter(),
                 Tables\Columns\TextColumn::make('nama_lengkap')
                     ->searchable()
                     ->label('Nama Peserta'),
@@ -245,6 +256,10 @@ class PesertaResource extends Resource
                     ->label('Usulan'),
                 Tables\Columns\TextColumn::make('status_verifikasi')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'Pending' => 'Belum Verifikasi', // <-- Tambahkan ini agar di tabel juga tampil "Belum Verifikasi"
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'Pending' => 'warning',
                         'Revisi' => 'info',
@@ -287,7 +302,7 @@ class PesertaResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status_verifikasi')
                     ->options([
-                        'Pending' => 'Pending',
+                        'Pending' => 'Belum Verifikasi',
                         'Revisi' => 'Revisi',
                         'Terverifikasi' => 'Terverifikasi',
                         'Ditolak' => 'Ditolak',

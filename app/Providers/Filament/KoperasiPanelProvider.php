@@ -28,6 +28,7 @@ class KoperasiPanelProvider extends PanelProvider
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->registration(\App\Filament\Pages\Auth\RegisterKoperasi::class)
             ->brandName('SIFITKOP Koperasi')
+            ->favicon(asset('logo.png'))
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()
             ->renderHook(
@@ -35,11 +36,7 @@ class KoperasiPanelProvider extends PanelProvider
                 fn (): string => '<link rel="stylesheet" href="' . asset('css/spiggle-theme.css') . '?v=' . filemtime(public_path('css/spiggle-theme.css')) . '" />'
             )
             ->renderHook(
-<<<<<<< HEAD
                \Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-=======
-                \Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER,
->>>>>>> 67efacadfa6f074c57cb346c7380c20a5f378508
                 fn (): string => '<div x-data="{ 
                         theme: localStorage.getItem(\'theme\') || \'light\',
                         toggle() {

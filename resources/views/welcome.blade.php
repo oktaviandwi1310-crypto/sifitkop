@@ -18,7 +18,8 @@
 <!-- AOS -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <link href="{{ asset('front_assets/style.css') }}" rel="stylesheet" />
-<link rel="icon" type="image/x-icon" href="{{ asset('front_assets/hand-heart.png') }}">
+{{-- <link rel="icon" type="image/x-icon" href="{{ asset('front_assets/hand-heart.png') }}"> --}}
+<link rel="icon" href="{{ asset('sifitkop.png') }}" type="image/x-icon"/>
 
 
 
@@ -40,7 +41,7 @@
 <nav class="navbar navbar-expand-lg navbar-hw" id="mainNav">
   <div class="container">
     <a class="hw-logo" href="#home">
-      <span class="hw-logo-mark"><i class="bi bi-heart-fill"></i></span>
+      <span class="hw-logo-mark"><img src="{{ asset('sifitkop.png') }}" alt=""></span>
       SIFIT<span class="dot">KOP</span>
     </a>
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
