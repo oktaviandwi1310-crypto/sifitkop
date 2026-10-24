@@ -50,6 +50,10 @@ class Peserta extends Model
         'penguji_id' => 'array',
     ];
 
+    protected $attributes = [
+        'skor_admin' => 4,
+    ];
+
     protected static function booted()
     {
         static::creating(function ($peserta) {

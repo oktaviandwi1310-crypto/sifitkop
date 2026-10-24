@@ -9,7 +9,7 @@
             margin: 1.5cm 2cm 1.5cm 2cm;
         }
         body {
-            font-family: 'Times New Roman', Times, serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 11pt;
             line-height: 1.4;
             color: #000;
@@ -18,9 +18,7 @@
         .kop-table {
             width: 100%;
             border-collapse: collapse;
-            border-bottom: 3px double #000;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
+            font-family: Arial, Helvetica, sans-serif;
         }
         .kop-table td {
             border: none;
@@ -33,23 +31,32 @@
         }
         .header-text {
             text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
         }
         .header-text h3 {
             font-size: 13pt;
-            font-weight: bold;
+            font-weight: normal;
             margin: 0;
+            line-height: 1.2;
             text-transform: uppercase;
         }
         .header-text h2 {
-            font-size: 14pt;
+            font-size: 15pt;
             font-weight: bold;
-            margin: 2px 0;
+            margin: 1px 0 5px 0;
+            line-height: 1.15;
             text-transform: uppercase;
         }
         .header-text p {
             font-size: 8.5pt;
-            margin: 1px 0;
-            line-height: 1.2;
+            margin: 0;
+            line-height: 1.25;
+        }
+        .kop-garis {
+            border-top: 3px solid #000;
+            border-bottom: 1px solid #000;
+            height: 2px;
+            margin: 6px 0 15px 0;
         }
 
         .title {
@@ -105,18 +112,20 @@
     <!-- KOP SURAT -->
     <table class="kop-table">
         <tr>
-            <td style="width: 15%; text-align: center;">
+            <td style="width: 15%; text-align: left;">
                 <img src="{{ public_path('logo.png') }}" class="logo-kop" alt="Logo">
             </td>
-            <td style="width: 85%;" class="header-text">
-                <h3>PEMERINTAH PROVINSI JAWA TENGAH</h3>
-                <h2>DINAS KOPERASI, USAHA KECIL DAN MENENGAH</h2>
+            <td style="width: 70%;" class="header-text">
+                <h3>Pemerintah Provinsi Jawa Tengah</h3>
+                <h2>Dinas Koperasi, Usaha Kecil<br>dan Menengah</h2>
                 <p>Jln. Sisingamangaraja 3A Semarang Kode Pos 50253 Telepon 024-8310556, 8318773</p>
                 <p>Faksimili 0248414165 Laman http://dinkop-umkm.jatengprov.go.id</p>
                 <p>Surat Elektronik : dinkop@jatengprov.go.id</p>
             </td>
+            <td style="width: 15%;">&nbsp;</td>
         </tr>
     </table>
+    <div class="kop-garis"></div>
 
     <!-- JUDUL -->
     <div class="title">
@@ -197,6 +206,11 @@
                 <tr>
                     <td style="width: 5%;">3.</td>
                     <td style="width: 45%;">Penguji 3</td>
+                    <td style="width: 50%;">( ……………………………….. )</td>
+                </tr>
+                <tr>
+                    <td style="width: 5%;">4.</td>
+                    <td style="width: 45%;">Penguji 4</td>
                     <td style="width: 50%;">( ……………………………….. )</td>
                 </tr>
             @endforelse

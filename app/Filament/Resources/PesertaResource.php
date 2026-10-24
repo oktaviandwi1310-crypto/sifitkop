@@ -22,6 +22,8 @@ class PesertaResource extends Resource
     // Menu ini disembunyikan karena diganti KoperasiPesertaResource
     protected static bool $shouldRegisterNavigation = false;
 
+    public const POIN_AWAL = 4;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -171,8 +173,9 @@ class PesertaResource extends Resource
                             }),
 
                         Forms\Components\TextInput::make('skor_admin')
-                            ->label('Skor Verifikasi Dokumen (Maks. 17)')
+                            ->label('Skor Verifikasi Dokumen (Maks. 17 = 13 dokumen + 4 poin awal)')
                             ->numeric()
+                            ->default(self::POIN_AWAL)
                             ->readOnly(),
                             
                         Forms\Components\Placeholder::make('total_administratif')
@@ -224,12 +227,23 @@ class PesertaResource extends Resource
             ]);
     }
 
+    // public static function kalkulasiSkor(callable $set, callable $get)
+    // {
+    //     // Kalkulasi Verifikasi Dokumen Admin (Maks 17)
+    //     $pesertaChecklist = $get('penilaian_admin_checklist.peserta') ?? [];
+    //     $koperasiChecklist = $get('penilaian_admin_checklist.koperasi') ?? [];
+    //     $skorAdmin = count($pesertaChecklist) + count($koperasiChecklist);
+    //     $set('skor_admin', $skorAdmin);
+    // }
+
     public static function kalkulasiSkor(callable $set, callable $get)
     {
-        // Kalkulasi Verifikasi Dokumen Admin (Maks 17)
-        $pesertaChecklist = $get('penilaian_admin_checklist.peserta') ?? [];
+        $pesertaChecklist  = $get('penilaian_admin_checklist.peserta') ?? [];
         $koperasiChecklist = $get('penilaian_admin_checklist.koperasi') ?? [];
-        $skorAdmin = count($pesertaChecklist) + count($koperasiChecklist);
+
+        // Maks 13 dari centang + 4 poin awal = Maks 17
+        $skorAdmin = count($pesertaChecklist) + count($koperasiChecklist) + self::POIN_AWAL;
+
         $set('skor_admin', $skorAdmin);
     }
 
