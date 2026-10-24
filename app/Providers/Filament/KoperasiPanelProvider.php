@@ -100,8 +100,8 @@ class KoperasiPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Koperasi/Widgets'), for: 'App\\Filament\\Koperasi\\Widgets')
             ->widgets([
                 \App\Filament\Koperasi\Widgets\KoperasiStatusWidget::class,
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
