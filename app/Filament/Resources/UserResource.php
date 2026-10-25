@@ -2,26 +2,32 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Actions\ResetSandiAction;
 use App\Filament\Resources\UserResource\Pages;
-// use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Support\KebijakanSandi;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-// use Illuminate\Database\Eloquent\Builder;
-// use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
 {
-   protected static ?string $model = User::class;
+    protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Management User';
     protected static ?string $modelLabel = 'User';
     protected static ?string $pluralModelLabel = 'Management User';
+
+    // Hanya admin yang boleh mengelola akun pengguna.
+    public static function canViewAny(): bool
+    {
+        return Auth::user()?->role === 'admin';
+    }
 
     public static function form(Form $form): Form
     {
@@ -34,6 +40,7 @@ class UserResource extends Resource
 
                 Forms\Components\TextInput::make('username')
                     ->label('Username')
+                    ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
 
@@ -54,22 +61,26 @@ class UserResource extends Resource
                     ])
                     ->default('koperasi')
                     ->required()
-                    ->live(), // Diperlukan agar form responsif jika ada field kondisional
+                    ->live(),
 
-                // Relasi ke Koperasi (opsional / muncul jika memilih role 'koperasi')
+                // Relasi ke Koperasi (muncul jika memilih role 'koperasi')
                 Forms\Components\Select::make('koperasi_id')
                     ->label('Koperasi')
-                    ->relationship('koperasi', 'nama') // Sesuaikan 'nama' dengan kolom nama di tabel koperasis
+                    ->relationship('koperasi', 'nama_koperasi')
                     ->searchable()
                     ->nullable()
                     ->visible(fn (Forms\Get $get) => $get('role') === 'koperasi'),
 
+                // Hash dilakukan otomatis oleh cast 'hashed' di model User.
                 Forms\Components\TextInput::make('password')
                     ->label('Password')
                     ->password()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->revealable()
+                    ->helperText('Minimal 8 karakter, kombinasi huruf besar, huruf kecil, dan angka. Tidak boleh sama dengan username. Kosongkan saat edit jika tidak ingin mengubah.')
                     ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $context): bool => $context === 'create'),
+                    ->required(fn (string $context): bool => $context === 'create')
+                    ->rule(KebijakanSandi::aturanDasar())
+                    ->rule(fn (Forms\Get $get) => KebijakanSandi::tidakBolehSamaDenganUsername($get('username'))),
             ]);
     }
 
@@ -91,7 +102,6 @@ class UserResource extends Resource
                     ->label('Email')
                     ->searchable(),
 
-                // Badge role dengan warna berbeda untuk tiap role
                 Tables\Columns\TextColumn::make('role')
                     ->label('Role')
                     ->badge()
@@ -103,10 +113,23 @@ class UserResource extends Resource
                     })
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('koperasi.nama')
+                Tables\Columns\TextColumn::make('koperasi.nama_koperasi')
                     ->label('Koperasi')
                     ->placeholder('-')
                     ->toggleable(),
+
+                Tables\Columns\TextColumn::make('password_changed_at')
+                    ->label('Sandi Terakhir Diganti')
+                    ->dateTime('d M Y, H:i')
+                    ->placeholder('Wajib ganti')
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('status_akun')
+                    ->label('Status')
+                    ->badge()
+                    ->state(fn (User $record): string => $record->sedangTerkunci() ? 'Terkunci' : 'Normal')
+                    ->color(fn (string $state): string => $state === 'Terkunci' ? 'danger' : 'success'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -124,6 +147,31 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+
+                // Akun sendiri tidak ditampilkan tombol reset (ganti lewat halaman Ganti Sandi).
+                ResetSandiAction::make()
+                    ->visible(fn (User $record): bool => Auth::user()?->role === 'admin' && $record->id !== Auth::id()),
+
+                Tables\Actions\Action::make('bukaKunci')
+                    ->label('Buka Kunci')
+                    ->icon('heroicon-o-lock-open')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->visible(fn (User $record): bool => Auth::user()?->role === 'admin' && $record->sedangTerkunci())
+                    ->action(function (User $record): void {
+                        abort_unless(Auth::user()?->role === 'admin', 403);
+
+                        $record->forceFill([
+                            'failed_login_attempts' => 0,
+                            'locked_until'          => null,
+                        ])->saveQuietly();
+
+                        Notification::make()
+                            ->title('Kunci akun dibuka')
+                            ->success()
+                            ->send();
+                    }),
+
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

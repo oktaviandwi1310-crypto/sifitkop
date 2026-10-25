@@ -32,6 +32,11 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('2rem')
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()
+            ->profile(\App\Filament\Pages\Auth\GantiSandi::class)
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::CONTENT_START,
+                fn (): string => view('filament.banner-sandi')->render()
+            )
             ->renderHook(
                 \Filament\View\PanelsRenderHook::HEAD_END,
                 fn (): string => '<link rel="stylesheet" href="' . asset('css/spiggle-theme.css') . '?v=' . filemtime(public_path('css/spiggle-theme.css')) . '" />'
@@ -130,6 +135,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                \App\Http\Middleware\WajibGantiSandi::class,
             ])
             ->databaseNotifications();
     }

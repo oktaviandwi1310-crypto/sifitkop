@@ -4,8 +4,11 @@ namespace App\Filament\Pages\Auth;
 
 use App\Models\Koperasi;
 use App\Models\User;
+use App\Support\CaptchaGambar;
+use App\Support\KebijakanSandi;
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
@@ -14,14 +17,16 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Register as BaseRegister;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
-
-use Filament\Support\Enums\MaxWidth;
 
 class RegisterKoperasi extends BaseRegister
 {
@@ -68,7 +73,7 @@ class RegisterKoperasi extends BaseRegister
                             ->columnSpanFull(),
 
                         Hidden::make('is_new_koperasi')->default(false),
-                        
+
                         Hidden::make('koperasi_id')
                             ->required(fn (Get $get) => ! $get('is_new_koperasi'))
                             ->validationMessages([
@@ -136,7 +141,7 @@ class RegisterKoperasi extends BaseRegister
                             ->label('Nama PIC / Pengurus')
                             ->placeholder('Nama Lengkap Penanggung Jawab Koperasi')
                             ->columnSpanFull(),
-                        
+
                         TextInput::make('username')
                             ->label('Username Login')
                             ->placeholder('Contoh: koperasi_sejahtera')
@@ -151,13 +156,74 @@ class RegisterKoperasi extends BaseRegister
                             ->placeholder('email@koperasi.com'),
 
                         $this->getPasswordFormComponent()
-                            ->label('Kata Sandi'),
+                            ->label('Kata Sandi')
+                            ->helperText('Minimal 8 karakter, kombinasi huruf besar, huruf kecil, dan angka. Tidak boleh sama dengan username.')
+                            ->rule(fn (Get $get) => KebijakanSandi::tidakBolehSamaDenganUsername($get('username'))),
 
                         $this->getPasswordConfirmationFormComponent()
                             ->label('Konfirmasi Kata Sandi'),
+
+                        // Captcha gambar (sekali pakai, kode disimpan di session server)
+                        ...CaptchaGambar::komponen('registrasi'),
                     ]),
             ])
             ->statePath('data');
+    }
+
+    /**
+     * Registrasi TANPA login otomatis: setelah akun dibuat, pengguna
+     * diarahkan ke halaman login (lewat captcha dan penguncian akun).
+     */
+    public function register(): ?RegistrationResponse
+    {
+        try {
+            $this->rateLimit(2);
+        } catch (TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return null;
+        }
+
+        DB::transaction(function () {
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            // Captcha registrasi (sekali pakai)
+            if (! CaptchaGambar::periksa('registrasi', $data['captcha'] ?? null)) {
+                throw ValidationException::withMessages([
+                    'data.captcha' => 'Kode verifikasi yang Anda masukkan salah.',
+                ]);
+            }
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeRegister($data);
+
+            $this->callHook('beforeRegister');
+
+            $user = $this->handleRegistration($data);
+
+            $this->form->model($user)->saveRelationships();
+
+            $this->callHook('afterRegister');
+
+            event(new Registered($user));
+        });
+
+        // Sengaja TIDAK memanggil Filament::auth()->login($user).
+        Notification::make()
+            ->title('Registrasi berhasil')
+            ->body('Akun Anda sudah dibuat. Silakan login untuk melanjutkan.')
+            ->success()
+            ->send();
+
+        return new class implements RegistrationResponse {
+            public function toResponse($request)
+            {
+                return redirect()->to(Filament::getLoginUrl());
+            }
+        };
     }
 
     protected function searchKoperasi(?string $nik, Set $set, Get $get): void
@@ -184,14 +250,13 @@ class RegisterKoperasi extends BaseRegister
             return;
         }
 
-        // Cek apakah koperasi sudah memiliki user akun
-        $existingUser = User::where('koperasi_id', $koperasi->id)->first();
-        if ($existingUser) {
+        // Cek apakah koperasi sudah memiliki akun (username TIDAK ditampilkan)
+        if (User::where('koperasi_id', $koperasi->id)->exists()) {
             $this->resetKoperasiData($set);
 
             Notification::make()
                 ->title('Koperasi Sudah Memiliki Akun')
-                ->body("Koperasi '{$koperasi->nama_koperasi}' sudah terdaftar dengan username '{$existingUser->username}'. Silakan langsung login.")
+                ->body("Koperasi '{$koperasi->nama_koperasi}' sudah memiliki akun terdaftar. Silakan login. Jika lupa username atau kata sandi, hubungi admin Dinas.")
                 ->warning()
                 ->persistent()
                 ->send();
@@ -244,7 +309,7 @@ class RegisterKoperasi extends BaseRegister
         $isNewKoperasi = $data['is_new_koperasi'] ?? false;
 
         if ($isNewKoperasi) {
-            // Cek pencegahan ganda (race condition)
+            // Cek pencegahan ganda 
             $koperasi = Koperasi::where('nik', $data['nik'])->first();
             if ($koperasi) {
                 throw ValidationException::withMessages([
