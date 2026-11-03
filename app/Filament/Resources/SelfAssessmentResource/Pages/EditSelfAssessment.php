@@ -96,6 +96,16 @@ class EditSelfAssessment extends EditRecord
                         ->success()
                         ->send();
                 }),
+
+            // Pintasan ke halaman penilaian wawancara peserta yang sama.
+            // Hanya tampil untuk peserta Terverifikasi, karena menu Wawancara hanya memuat peserta tersebut.
+            Actions\Action::make('ke_wawancara')
+                ->label('Ke Wawancara Peserta')
+                ->icon('heroicon-o-microphone')
+                ->color('primary')
+                ->url(fn () => \App\Filament\Resources\WawancaraResource::getUrl('edit', ['record' => $this->record->peserta_id]))
+                ->visible(fn () => $this->record->peserta?->status_verifikasi === 'Terverifikasi'),
+
             Actions\DeleteAction::make(),
         ];
     }
@@ -120,10 +130,16 @@ class EditSelfAssessment extends EditRecord
             $data['status_penguji'] = $data['status_mandiri'] ?? $data['status_kelulusan'] ?? 'Terpenuhi';
         }
 
-        // 3. Default penguji penilai (user login atau asesor default)
+        // 3. Default penguji penilai
         if (empty($data['penguji_id'])) {
-              $data['penguji_id'] = auth()->id() ?? 1;
-            // $data['penguji_id'] = auth()->id() ?? 1;
+            if ($this->record->hasCast('penguji_id', ['array', 'json'])) {
+                // Kolom sudah berupa array (multi penguji): ikut tim penguji yang ditugaskan ke peserta
+                $data['penguji_id'] = \Illuminate\Support\Arr::wrap($this->record->peserta?->penguji_id);
+            } else {
+                // Kolom masih satu nilai (versi lama): pakai user yang sedang login
+                $data['penguji_id'] = \Illuminate\Support\Facades\Auth::id() ?? 1;
+                // $data['penguji_id'] = auth()->id() ?? 1;
+            }
         }
 
         // 4. Inisialisasi struktur penilaian_penguji_raw jika masih kosong

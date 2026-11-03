@@ -27,4 +27,9 @@ class Koperasi extends Model
     {
         return $this->hasMany(Peserta::class, 'koperasi_id');
     }
+
+    public function selfAssessments()
+    {
+        return $this->hasManyThrough(SelfAssessment::class, Peserta::class, 'koperasi_id', 'peserta_id');
+    }
 }

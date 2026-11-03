@@ -35,7 +35,7 @@ class ResetSandiAction extends Action
 
                 $record->forceFill([
                     'password'              => $sementara,
-                    'password_changed_at'   => null, // null = dianggap kedaluwarsa → wajib ganti
+                    'password_changed_at'   => null, 
                     'failed_login_attempts' => 0,
                     'locked_until'          => null,
                 ])->save();

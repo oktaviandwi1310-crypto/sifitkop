@@ -28,7 +28,7 @@ class KoperasiPanelProvider extends PanelProvider
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->registration(\App\Filament\Pages\Auth\RegisterKoperasi::class)
             ->brandName('SIFITKOP Koperasi')
-            ->favicon(asset('logo.png'))
+            ->favicon(asset('logo-trans.png'))
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()
             ->profile(\App\Filament\Pages\Auth\GantiSandi::class)

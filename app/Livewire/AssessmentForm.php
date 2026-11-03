@@ -93,15 +93,13 @@ class AssessmentForm extends Component
             'dokumen_paparan.mimes' => 'Format paparan harus berupa PDF, PPT, atau PPTX.',
         ]);
 
-        $path = null;
+        // Jangan menimpa PPT yang sudah diunggah koperasi: simpan hanya jika ada file baru
+        $dataPeserta = ['status_verifikasi' => 'Pending'];
         if ($this->dokumen_paparan) {
-            $path = $this->dokumen_paparan->store('paparan-peserta', 'public');
+            $dataPeserta['dokumen_paparan'] = $this->dokumen_paparan->store('paparan-peserta', 'public');
         }
 
-        $this->peserta->update([
-            'dokumen_paparan' => $path,
-            'status_verifikasi' => 'Pending'
-        ]);
+        $this->peserta->update($dataPeserta);
 
         $integritasScore = $this->int_1 + $this->int_2 + $this->int_3 + $this->int_4 + $this->int_5 + $this->int_6 + $this->int_7 + $this->int_8 + $this->int_9;
         $reputasiScore = $this->rep_1 + $this->rep_2;

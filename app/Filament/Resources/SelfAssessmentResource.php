@@ -19,6 +19,7 @@ class SelfAssessmentResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
     protected static ?string $navigationLabel = 'Self Assessment';
     protected static ?string $navigationGroup = 'Verifikasi UKK';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
